@@ -1,0 +1,25 @@
+test-dagger:
+  ## Required, case insensitive
+  material: iron_sword
+  type: dagger
+  ## Optional
+  title: "Testing Dagger of the Staff"
+  rarity: rare # Default: common
+  lore:
+    - "&dPiece of Crap"
+  enchantments:
+    - sharpness 1
+    - unbreaking 1
+  attributes:
+    GENERIC_ATTACK_DAMAGE:
+      value: 20
+      slots:
+        - hand
+    GENERIC_ATTACK_KNOCKBACK:
+      value: 20
+      slots:
+        - hand
+    GENERIC_ATTACK_SPEED:
+      value: 20
+      slots:
+        - hand

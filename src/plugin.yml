@@ -1,0 +1,11 @@
+name: Terra-Items
+version: 1.0
+author: Zachary Nickels
+main: net.terramc.terraitems.TerraItems
+api-version: 1.19
+
+commands:
+  terraitem:
+    description: Spawn a TerraMC item
+    usage: /<command>
+    permission: terramc.terraitem
