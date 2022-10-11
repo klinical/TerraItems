@@ -1,25 +1,24 @@
 test-dagger:
-  ## Required, case insensitive
-  material: iron_sword
+  ## Required, case-insensitive
+  material: iron
   type: dagger
   ## Optional
   title: "Testing Dagger of the Staff"
-  rarity: rare # Default: common
+  rarity: rare
   lore:
     - "&dPiece of Crap"
   enchantments:
     - sharpness 1
     - unbreaking 1
-  attributes:
-    GENERIC_ATTACK_DAMAGE:
-      value: 20
-      slots:
-        - hand
-    GENERIC_ATTACK_KNOCKBACK:
-      value: 20
-      slots:
-        - hand
-    GENERIC_ATTACK_SPEED:
-      value: 20
-      slots:
-        - hand
+
+muramasa:
+  ## Required, case-insensitive
+  material: netherite
+  type: sword
+  ## Optional
+  custom-model: 2
+  title: "Muramasa"
+  rarity: epic
+  enchantments:
+    - mending 1
+    - sharpness 3

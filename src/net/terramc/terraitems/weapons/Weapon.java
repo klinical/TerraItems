@@ -1,8 +1,9 @@
 package net.terramc.terraitems.weapons;
 
+import net.terramc.terraitems.EquipmentMaterialType;
 import net.terramc.terraitems.Rarity;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -20,13 +22,59 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class Weapon extends ItemStack {
+public class Weapon {
     private String name;
     private Rarity rarity = Rarity.COMMON;
     private String title;
+    private ItemMeta meta;
+    private WeaponType weaponType;
 
-    public Weapon(Material material) {
-        super(material, 1);
+    private ItemStack itemStack;
+    private EquipmentMaterialType weaponMaterialType;
+
+    public Weapon(EquipmentMaterialType materialType, WeaponType weaponType) {
+        itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
+        meta = itemStack.getItemMeta();
+        this.weaponType = weaponType;
+        weaponMaterialType = materialType;
+
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes(
+                    '&',
+                    "&r" + weaponMaterialType.getPrefix() + ' ' + weaponType.getDisplayName()));
+
+            meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, getAttackSpeedModifier());
+            meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, getAttackDamageModifier());
+            meta.setLore(getWeaponInfoLore());
+
+            // Use default WeaponType custom model
+            meta.setCustomModelData(1);
+
+            itemStack.setItemMeta(meta);
+        }
+    }
+
+    public void setCustomModel(int model) {
+        meta.setCustomModelData(model);
+        itemStack.setItemMeta(meta);
+    }
+
+    private AttributeModifier getAttackSpeedModifier() {
+        UUID uuid = UUID.randomUUID();
+        String name = meta.getDisplayName() + Attribute.GENERIC_ATTACK_DAMAGE;
+
+        return new AttributeModifier(
+                uuid, name, weaponType.getAttributeSpeed(weaponMaterialType),
+                AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+    }
+
+    private AttributeModifier getAttackDamageModifier() {
+        UUID uuid = UUID.randomUUID();
+        String name = meta.getDisplayName() + Attribute.GENERIC_ATTACK_DAMAGE;
+
+        return new AttributeModifier(
+                uuid, name, weaponType.getAttributeDamage(weaponMaterialType),
+                AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
     }
 
     public void setName(String name) {
@@ -36,7 +84,6 @@ public class Weapon extends ItemStack {
     public void setTitle(String title) {
         this.title = title;
 
-        ItemMeta meta = this.getItemMeta();
         if (meta != null) {
             if (rarity != Rarity.COMMON) {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes(
@@ -46,7 +93,7 @@ public class Weapon extends ItemStack {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', title));
             }
 
-            this.setItemMeta(meta);
+            this.itemStack.setItemMeta(meta);
         } else {
             throw new IllegalStateException("Weapon Meta Object is null while setting title");
         }
@@ -57,11 +104,21 @@ public class Weapon extends ItemStack {
         this.rarity = rarity;
     }
 
+    private List<String> getWeaponInfoLore() {
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.translateAlternateColorCodes(
+                '&', "&8" + weaponMaterialType.getPrefix()));
+        lore.add(ChatColor.translateAlternateColorCodes(
+                '&', "&8" + weaponType.getDisplayName() + "\n"));
+
+        return lore;
+    }
+
     public void setAttributes(ConfigurationSection attributeSection, FileConfiguration config) {
         Set<String> attributesKeys = attributeSection.getKeys(false);
         String sectionKey = attributeSection.getCurrentPath();
 
-        ItemMeta meta = this.getItemMeta();
         if (meta != null) {
             for (String attribute : attributesKeys) {
                 String attributeKey = sectionKey + "." + attribute;
@@ -77,28 +134,30 @@ public class Weapon extends ItemStack {
                 }
             }
 
-            this.setItemMeta(meta);
+            this.itemStack.setItemMeta(meta);
         } else {
             throw new IllegalStateException("Weapon Meta Object is null while setting attributes");
         }
     }
 
     public void setLore(List<String> lore) {
-        ItemMeta meta = this.getItemMeta();
         if (meta != null) {
-            meta.setLore(lore
+            List<String> newLore = getWeaponInfoLore();
+            List<String> translatedCustomLore = lore
                     .stream()
                     .map(l -> ChatColor.translateAlternateColorCodes('&', l))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
 
-            this.setItemMeta(meta);
+            newLore.addAll(translatedCustomLore);
+            meta.setLore(newLore);
+
+            this.itemStack.setItemMeta(meta);
         } else {
             throw new IllegalStateException("Weapon Meta Object is null while setting lore");
         }
     }
 
     public void setEnchantments(List<String> enchantments) {
-        ItemMeta meta = this.getItemMeta();
         if (meta != null) {
             String regex = "(\\w+)\\s+(\\d+)";
             Pattern pattern = Pattern.compile(regex);
@@ -119,7 +178,7 @@ public class Weapon extends ItemStack {
                 }
             }
 
-            this.setItemMeta(meta);
+            this.itemStack.setItemMeta(meta);
         } else {
             throw new IllegalStateException("Weapon Meta Object is null while setting enchantments");
         }
@@ -135,5 +194,11 @@ public class Weapon extends ItemStack {
 
     public String getName() {
         return name;
+    }
+
+    public WeaponType getWeaponType() { return weaponType; }
+
+    public ItemStack getItemStack() {
+        return itemStack;
     }
 }

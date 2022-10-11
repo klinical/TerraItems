@@ -1,6 +1,7 @@
 package net.terramc.terraitems;
 
 import net.terramc.terraitems.weapons.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,7 +16,7 @@ public class WeaponsConfig {
     private File itemsConfigFile;
     private final FileConfiguration config;
     private final TerraItems plugin;
-    private HashMap<String, ItemStack> items;
+    private HashMap<String, Weapon> items;
 
     WeaponsConfig(TerraItems plugin) {
         this.plugin = plugin;
@@ -55,36 +56,11 @@ public class WeaponsConfig {
             }
 
             try {
-                Material material = Material.valueOf(itemMaterial.toUpperCase());
+                EquipmentMaterialType material = EquipmentMaterialType.valueOf(itemMaterial.toUpperCase());
                 WeaponType weaponType = WeaponType.valueOf(itemType.toUpperCase());
 
                 // Switch on weapon type, create a Weapon with given material and itemName
-                Weapon weapon;
-                switch (weaponType) {
-                    case AXE:
-                        weapon = new Axe(material);
-                        break;
-                    case DAGGER:
-                        weapon = new Dagger(material);
-                        break;
-                    case MACE:
-                        weapon = new Mace(material);
-                        break;
-                    case STAFF:
-                        weapon = new Staff(material);
-                        break;
-                    case SWORD:
-                        weapon = new Sword(material);
-                        break;
-                    case BOW:
-                        weapon = new Bow();
-                        break;
-                    case CROSSBOW:
-                        weapon = new Crossbow();
-                        break;
-                    default:
-                        throw new IllegalStateException("Unhandled weapon type: " + weaponType);
-                }
+                Weapon weapon = new Weapon(material, weaponType);
 
                 // Set the weapon's name
                 weapon.setName(itemName);
@@ -117,6 +93,12 @@ public class WeaponsConfig {
                 if (itemTitle != null)
                     weapon.setTitle(itemTitle);
 
+                // Custom model
+                int model = config.getInt(itemName + ".custom-model");
+                logger.info("model: "+model+" name: "+itemName);
+                if (model != 0)
+                    weapon.setCustomModel(model);
+
                 // Register item by its key in the weapons config
                 items.put(itemName, weapon);
             } catch (IllegalArgumentException | IllegalStateException ex) {
@@ -126,7 +108,7 @@ public class WeaponsConfig {
         }
     }
 
-    public HashMap<String, ItemStack> getItems() {
+    public HashMap<String, Weapon> getItems() {
         return items;
     }
 
