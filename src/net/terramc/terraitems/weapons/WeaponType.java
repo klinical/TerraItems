@@ -1,11 +1,8 @@
 package net.terramc.terraitems.weapons;
 
-import net.terramc.terraitems.EquipmentMaterialType;
-import net.terramc.terraitems.TerraItems;
-import org.bukkit.Bukkit;
+import net.terramc.terraitems.shared.EquipmentMaterialType;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public enum WeaponType {
     SWORD,
@@ -17,6 +14,10 @@ public enum WeaponType {
     CROSSBOW,
     GLAIVE;
 
+    /**
+     * TODO: these default values being stored in a flat file such as JSON would probably be cleaner and easier
+     * to maintain
+     */
     private static HashMap<EquipmentMaterialType, HashMap<WeaponType, Integer>> damageMap;
     static {
         damageMap = new HashMap<>();

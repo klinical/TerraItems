@@ -7,5 +7,17 @@ api-version: 1.19
 commands:
   terraitem:
     description: Spawn a TerraMC item
-    usage: /<command>
+    usage: /<command> give {item} {?player}
     permission: terramc.terraitem
+    aliases:
+      - ti
+      - titem
+      - terrai
+  terraconfig:
+    description: Manage TerraMC plugin settings
+    usage: /<command> reload
+    permission: terramc.tconfig
+    aliases:
+      - tcfg
+      - tconfig
+      - terracfg

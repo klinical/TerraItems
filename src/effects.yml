@@ -1,46 +1,32 @@
-weapon:
-  sword:
-    bleed-1:
-      # applies a DoT (or HoT possibly, if applied to ally)
-      effect-type: dot
-      # What triggers the effect (on use, on hit)
-      application-trigger: hit
-      # Chance of applying effect each time there is a trigger event
-      application-chance: 5
-      # How does the effect work? single is one target, radius is multiple in radius
-      application-type: single
-      # Chance each tick of timer to apply, applicable only if application-type is 'timer'
-      # 1 proc tick = 20 minecraft tick
-      tick-proc-chance: 50
-      # Self, friendly, enemy
-      target: enemy
-      # 'Amount' to apply, hearts healed for friendly, hearts damaged for enemy if proc succeeds
-      proc-value: 1
-    poison-1:
-      # applies a potion on
-      effect-type: potion
-      # What triggers the effect (on use, on hit)
-      application-trigger: hit
-      # Chance of applying effect each time there is a trigger event
-      application-chance: 5
-      # How does the effect work? single is one target, radius is multiple in radius
-      application-type: single
-      potion-type: poison
-      potion-level: 1
-      # Self, friendly, enemy
-      target: enemy
-    wither-1:
-      # elemental effects, such as wither, fire
-      effect-type: elemental
-      # element (wither, fire)
-      element: wither
-      # What triggers the effect (on use, on hit)
-      application-trigger: hit
-      # How does the effect work? single is one target, radius is multiple in radius
-      application-type: radius
-      # num of blocks in radius to apply effect
-      application-radius: 5
-      # Chance of applying effect each time there is a trigger event
-      application-chance: 5
-      # Self, friendly, enemy
-      target: enemy
+bleed-1:
+  application:
+    ## EffectApplication
+    # applies a DoT (or HoT possibly, if applied to ally) every 20 ticks
+    type: timer
+    # How often (in seconds) to apply effect (Only valid for timer effect types)
+    every: 3
+    # How does the effect work? single is one target, radius is multiple in radius, self is self
+    target: single
+
+  effect:
+    ## Effect
+    type: damage
+    # Level of potion/elemental effect, acts as multiplier for other effect type damage/healing
+    level: 2
+    # measured in seconds, defaults to 0
+    duration: 10
+
+  trigger:
+    ## EffectTrigger
+    # type of item it is applied to (armor, weapon, trinket)
+    type: weapon
+    # What triggers the effect (on use, on hit, periodic)
+    trigger: hit
+    # Chance of applying effect each time there is a trigger event
+    chance: 5
+
+  meta:
+    ## EffectMeta
+    user-notification: "&cTarget is afflicted with a small bleed."
+    target-notification: "&cYou're losing blood..."
+    display: "Has a 5% chance\non hit to inflict a &csmall bleed&a\non the target for 10 seconds."

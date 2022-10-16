@@ -1,6 +1,6 @@
-package net.terramc.terraitems;
+package net.terramc.terraitems.commands;
 
-import net.terramc.terraitems.weapons.Weapon;
+import net.terramc.terraitems.TerraItems;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,12 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 
 public class ItemSpawn implements CommandExecutor {
 
     private final TerraItems plugin;
-    private final HashMap<String, Weapon> items;
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender,
@@ -57,12 +55,15 @@ public class ItemSpawn implements CommandExecutor {
     }
 
     private void giveItem(Player giveTarget, String itemName) {
-        ItemStack newItem = items.get(itemName).getItemStack().clone();
+        ItemStack newItem = plugin.getWeaponsConfig()
+                .getItems()
+                .get(itemName)
+                .getItemStack();
+
         giveTarget.getInventory().addItem(newItem);
     }
 
-    public ItemSpawn(TerraItems plugin, HashMap<String, Weapon> items) {
+    public ItemSpawn(TerraItems plugin) {
         this.plugin = plugin;
-        this.items = items;
     }
 }

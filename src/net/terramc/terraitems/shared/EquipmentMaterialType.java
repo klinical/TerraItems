@@ -1,4 +1,4 @@
-package net.terramc.terraitems;
+package net.terramc.terraitems.shared;
 
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Material;

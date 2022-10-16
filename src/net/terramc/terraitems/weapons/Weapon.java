@@ -1,7 +1,9 @@
 package net.terramc.terraitems.weapons;
 
-import net.terramc.terraitems.EquipmentMaterialType;
-import net.terramc.terraitems.Rarity;
+import net.terramc.terraitems.effects.Effect;
+import net.terramc.terraitems.effects.TerraEffect;
+import net.terramc.terraitems.shared.EquipmentMaterialType;
+import net.terramc.terraitems.shared.Rarity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -13,6 +15,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,28 +28,33 @@ import java.util.stream.Collectors;
 
 public class Weapon {
     private String name;
-    private Rarity rarity = Rarity.COMMON;
     private String title;
-    private ItemMeta meta;
-    private WeaponType weaponType;
 
-    private ItemStack itemStack;
-    private EquipmentMaterialType weaponMaterialType;
+    private final ItemStack itemStack;
+    private final ItemMeta meta;
+    private List<TerraEffect> effects;
+
+    private List<String> customLore = new ArrayList<>();
+    private List<String> attributeLore = new ArrayList<>();
+    private List<String> effectLore = new ArrayList<>();
+
+    private final WeaponType weaponType;
+    private final EquipmentMaterialType materialType;
+    private Rarity rarity = Rarity.COMMON; // All items default to common unless changed
 
     public Weapon(EquipmentMaterialType materialType, WeaponType weaponType) {
-        itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
-        meta = itemStack.getItemMeta();
         this.weaponType = weaponType;
-        weaponMaterialType = materialType;
+        this.materialType = materialType;
+        this.itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
+        this.meta = itemStack.getItemMeta();
 
         if (meta != null) {
             meta.setDisplayName(ChatColor.translateAlternateColorCodes(
                     '&',
-                    "&r" + weaponMaterialType.getPrefix() + ' ' + weaponType.getDisplayName()));
+                    "&r" + materialType.getPrefix() + ' ' + weaponType.getDisplayName()));
 
             meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, getAttackSpeedModifier());
             meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, getAttackDamageModifier());
-            meta.setLore(getWeaponInfoLore());
 
             // Use default WeaponType custom model
             meta.setCustomModelData(1);
@@ -54,9 +63,49 @@ public class Weapon {
         }
     }
 
+    public List<TerraEffect> getEffects() {
+        return effects;
+    }
+
+    public boolean hasCustomEffect() {
+        return !effects.isEmpty();
+    }
+
     public void setCustomModel(int model) {
         meta.setCustomModelData(model);
-        itemStack.setItemMeta(meta);
+        this.itemStack.setItemMeta(meta);
+    }
+
+    public void setEffects(List<TerraEffect> effects) {
+        this.effects = effects;
+
+        for (TerraEffect effect : effects) {
+
+            if (effect.getMeta() != null && effect.getMeta().getDisplay() != null) {
+                String displayLore = effect.getMeta().getDisplay();
+                String[] l = displayLore.split("\n");
+
+                Bukkit.getLogger().warning(displayLore);
+                Bukkit.getLogger().warning(l.toString());
+
+                for (String ls : l) {
+                    effectLore.add(ChatColor.translateAlternateColorCodes('&', "&a" + ls));
+                }
+            }
+        }
+    }
+
+    public void buildLore() {
+        List<String> lore = new ArrayList<>();
+
+        lore.addAll(getWeaponInfoLore());
+        lore.addAll(effectLore);
+
+        if (!effectLore.isEmpty())
+            lore.add("");
+
+        meta.setLore(lore);
+        this.itemStack.setItemMeta(meta);
     }
 
     private AttributeModifier getAttackSpeedModifier() {
@@ -64,7 +113,7 @@ public class Weapon {
         String name = meta.getDisplayName() + Attribute.GENERIC_ATTACK_DAMAGE;
 
         return new AttributeModifier(
-                uuid, name, weaponType.getAttributeSpeed(weaponMaterialType),
+                uuid, name, weaponType.getAttributeSpeed(materialType),
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
     }
 
@@ -73,14 +122,24 @@ public class Weapon {
         String name = meta.getDisplayName() + Attribute.GENERIC_ATTACK_DAMAGE;
 
         return new AttributeModifier(
-                uuid, name, weaponType.getAttributeDamage(weaponMaterialType),
+                uuid, name, weaponType.getAttributeDamage(materialType),
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
     }
 
+    // Name is the name of the weapon as it were an entry in the weapons.yml
     public void setName(String name) {
         this.name = name;
+        PersistentDataContainer data  = meta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("Terra-Items"), "weapon-name");
+        data.set(key,
+                PersistentDataType.STRING,
+                name);
+
+        this.itemStack.setItemMeta(meta);
     }
 
+    // Title is the name of the weapon as it were set in the weapons.yml in combination with the color code of the
+    // appropriate 'rarity' setting on the weapon
     public void setTitle(String title) {
         this.title = title;
 
@@ -99,22 +158,23 @@ public class Weapon {
         }
     }
 
-    // Set rarity and overwrite current item meta display name by adding the rarity title color code in front
+    // How 'common' the item is, affects the default color of the in-game item display name
     public void setRarity(Rarity rarity) {
         this.rarity = rarity;
     }
 
+    // The lore regarding the weaponType and EquipmentMaterialType
     private List<String> getWeaponInfoLore() {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.translateAlternateColorCodes(
-                '&', "&8" + weaponMaterialType.getPrefix()));
-        lore.add(ChatColor.translateAlternateColorCodes(
-                '&', "&8" + weaponType.getDisplayName() + "\n"));
+                '&',
+                Rarity.getPrefix(rarity) + rarity.getDisplayName() + "&r &8" + materialType.getPrefix() + " " + weaponType.getDisplayName()));
 
         return lore;
     }
 
+    // Base stat attributes such as attack damage, knockback
     public void setAttributes(ConfigurationSection attributeSection, FileConfiguration config) {
         Set<String> attributesKeys = attributeSection.getKeys(false);
         String sectionKey = attributeSection.getCurrentPath();
@@ -142,16 +202,12 @@ public class Weapon {
 
     public void setLore(List<String> lore) {
         if (meta != null) {
-            List<String> newLore = getWeaponInfoLore();
             List<String> translatedCustomLore = lore
                     .stream()
                     .map(l -> ChatColor.translateAlternateColorCodes('&', l))
                     .collect(Collectors.toList());
 
-            newLore.addAll(translatedCustomLore);
-            meta.setLore(newLore);
-
-            this.itemStack.setItemMeta(meta);
+            customLore.addAll(translatedCustomLore);
         } else {
             throw new IllegalStateException("Weapon Meta Object is null while setting lore");
         }

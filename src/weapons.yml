@@ -1,15 +1,16 @@
-test-dagger:
+kitchen-knife:
   ## Required, case-insensitive
   material: iron
   type: dagger
   ## Optional
-  title: "Testing Dagger of the Staff"
-  rarity: rare
+  title: "Kitchen Knife"
+  rarity: uncommon
   lore:
-    - "&dPiece of Crap"
+    - "&dStandard issue kitchen-ware."
+  effects:
+    - bleed-1
   enchantments:
-    - sharpness 1
-    - unbreaking 1
+    - sharpness 2
 
 muramasa:
   ## Required, case-insensitive
@@ -21,4 +22,4 @@ muramasa:
   rarity: epic
   enchantments:
     - mending 1
-    - sharpness 3
+    - sharpness 5
