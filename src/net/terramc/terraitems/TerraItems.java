@@ -10,62 +10,59 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
+import java.util.Objects;
 
 public class TerraItems extends JavaPlugin {
 
-    private Logger logger;
     private WeaponsConfig weaponsConfig;
     private EffectsConfig effectsConfig;
 
     @Override
     public void onDisable() {
-        logger.info("[Terra Items] Disabled.");
+        this.getLogger().info("[Terra Items] Disabled.");
     }
 
     @Override
     public void onEnable() {
-        logger = Bukkit.getLogger();
-        effectsConfig = new EffectsConfig(this);
-        weaponsConfig = new WeaponsConfig(this);
-        saveDefaultConfig();
+        initConfigs();
+        initCraftingRecipes();
+        initCommandExecutors();
+        initEventHandlers();
 
-        addCraftingRecipes();
-
-        /**
-         * research possibility of extending reach of glaive types (rename to spear?)
-         * give maces, glaives, staffs a reason to actually be used + crafted (rename maces to blunt?)
-         * custom effects!
-         * investigate possibilities of a gun type
-         * shields support, off-hand items support
-         * cloth, leather, plate armor types
-         * Reorganize to support new config scheme of weapons.yml, off-hands.yml, armor.yml, weapons.yml, effects.yml
-         * Extract shareable code from WeaponsConfig to be used across the 5 yml configs
-         * Mark and document optional/required fields for entry settings in the configs
-         * Refactor item spawn commands to work with variation in item types
-         * allow specifying amount in give command
-         */
-
-        this.getCommand("terraitem")
-                .setExecutor(new ItemSpawn(this));
-        this.getCommand("terraconfig")
-                .setExecutor(new TerraConfig(this));
-
-        getServer().getPluginManager().registerEvents(new OnHitListener(effectsConfig, weaponsConfig), this);
-
-        logger.info("[Terra Items] Enabled.");
+        Bukkit.getLogger().info("[Terra Items] Enabled.");
     }
 
     public void reloadConfigs() {
         effectsConfig = new EffectsConfig(this);
         weaponsConfig = new WeaponsConfig(this);
-        logger.info("Reloaded configuration files.");
+        this.getLogger().info("Reloaded configuration files.");
+    }
+
+    private void initConfigs() {
+        effectsConfig = new EffectsConfig(this);
+        weaponsConfig = new WeaponsConfig(this);
+        saveDefaultConfig();
+    }
+
+    private void initCommandExecutors() {
+        Objects.requireNonNull(this.getCommand("terraitem"))
+                .setExecutor(new ItemSpawn(this));
+        Objects.requireNonNull(this.getCommand("terraconfig"))
+                .setExecutor(new TerraConfig(this));
+    }
+
+    private void initEventHandlers() {
+        getServer().getPluginManager().registerEvents(new OnHitListener(
+                        weaponsConfig, this),
+                this
+        );
     }
 
     // Add base item crafting recipes for custom items - were gonna need a better way to do this
-    private void addCraftingRecipes() {
+    private void initCraftingRecipes() {
         EquipmentMaterialType[] materials = {
                 EquipmentMaterialType.IRON, EquipmentMaterialType.DIAMOND, EquipmentMaterialType.NETHERITE
         };
@@ -106,5 +103,9 @@ public class TerraItems extends JavaPlugin {
 
     public EffectsConfig getEffectsConfig() {
         return effectsConfig;
+    }
+
+    public static Plugin lookupTerraPlugin() {
+        return Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
     }
 }

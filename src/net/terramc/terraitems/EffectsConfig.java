@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class EffectsConfig {
-    private final File configFile;
     private final FileConfiguration config;
     private final TerraItems plugin;
     private HashMap<String, TerraEffect> effects;
@@ -22,7 +21,7 @@ public class EffectsConfig {
     EffectsConfig(TerraItems plugin) {
         this.plugin = plugin;
 
-        configFile = ConfigUtility.createConfigFile("effects.yml", plugin);
+        File configFile = ConfigUtility.createConfigFile("effects.yml", plugin);
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
         readEffects();
@@ -65,13 +64,5 @@ public class EffectsConfig {
 
     public HashMap<String, TerraEffect> getItems() {
         return effects;
-    }
-
-    public File getItemsConfigFile() {
-        return configFile;
-    }
-
-    public FileConfiguration getConfig() {
-        return config;
     }
 }

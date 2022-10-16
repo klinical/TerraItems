@@ -7,8 +7,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.Objects;
 
 public class EffectApplication {
-    private EffectApplicationType applicationType;
-    private EffectTargetType targetType;
+    private final EffectApplicationType applicationType;
+    private final EffectTargetType targetType;
     private int procRate;
 
     public EffectApplication(EffectApplicationType applicationType, EffectTargetType targetType) {
@@ -33,13 +33,8 @@ public class EffectApplication {
         return applicationType;
     }
 
-    public EffectTargetType getTargetType() {
-        return targetType;
-    }
 
     public int getProcRate() {
         return procRate;
     }
-
-    public void setProcRate(int rate) { this.procRate = rate; }
 }

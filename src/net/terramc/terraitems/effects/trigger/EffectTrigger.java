@@ -1,15 +1,15 @@
 package net.terramc.terraitems.effects.trigger;
 
-import net.terramc.terraitems.ItemType;
+import net.terramc.terraitems.shared.ItemType;
 import net.terramc.terraitems.shared.ConfigUtility;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
 public class EffectTrigger {
-    private ItemType itemType;
-    private EffectTriggerType triggerType;
-    private int chance;
+    private final ItemType itemType;
+    private final EffectTriggerType triggerType;
+    private final int chance;
 
     public EffectTrigger(ItemType itemType, EffectTriggerType triggerType, int chance) {
         this.itemType = itemType;
@@ -24,14 +24,6 @@ public class EffectTrigger {
         triggerType = EffectTriggerType
                 .valueOf(ConfigUtility.readString(section, "trigger"));
         chance = section.getInt("chance");
-    }
-
-    public ItemType getItemType() {
-        return itemType;
-    }
-
-    public EffectTriggerType getTriggerType() {
-        return triggerType;
     }
 
     public int getChance() {

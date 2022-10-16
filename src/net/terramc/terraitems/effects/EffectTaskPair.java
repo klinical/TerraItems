@@ -1,8 +1,8 @@
 package net.terramc.terraitems.effects;
 
 public class EffectTaskPair {
-    private int effectTaskId;
-    private int cancelEffectTaskId;
+    private final int effectTaskId;
+    private final int cancelEffectTaskId;
 
     public EffectTaskPair(int effectTaskId, int cancelEffectTaskId) {
         this.effectTaskId = effectTaskId;

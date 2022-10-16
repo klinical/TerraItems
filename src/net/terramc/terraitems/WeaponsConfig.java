@@ -6,7 +6,6 @@ import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
 import net.terramc.terraitems.weapons.WeaponType;
 import net.terramc.terraitems.weapons.*;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class WeaponsConfig {
-    private File configFile;
     private final FileConfiguration config;
     private final TerraItems plugin;
     private HashMap<String, Weapon> items;
@@ -25,7 +23,7 @@ public class WeaponsConfig {
     WeaponsConfig(TerraItems plugin) {
         this.plugin = plugin;
 
-        configFile = ConfigUtility.createConfigFile("weapons.yml", plugin);
+        File configFile = ConfigUtility.createConfigFile("weapons.yml", plugin);
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
         readWeapons();
@@ -97,10 +95,7 @@ public class WeaponsConfig {
                         .map(effect -> plugin.getEffectsConfig().getItems().get(effect))
                         .collect(Collectors.toList());
 
-                logger.warning(conv + " " + effects + " " + plugin.getEffectsConfig().getItems());
-
                 weapon.setEffects(conv);
-
 
                 // Meta lore lines
                 List<String> itemLore = config.getStringList(itemName + ".lore");
@@ -108,11 +103,6 @@ public class WeaponsConfig {
                     weapon.setLore(itemLore);
 
                 weapon.buildLore();
-
-                logger.info(weapon.getItemStack().getItemMeta().getLore().toString());
-
-                // Register item by its key in the weapons config
-                Bukkit.getLogger().warning(weapon.getItemStack().getItemMeta().getAsString());
                 items.put(itemName, weapon);
             } catch (IllegalArgumentException | IllegalStateException ex) {
                 logger.warning("Encountered exception when parsing weapon [" + itemName + "].");
@@ -124,13 +114,5 @@ public class WeaponsConfig {
 
     public HashMap<String, Weapon> getItems() {
         return items;
-    }
-
-    public File getItemsConfigFile() {
-        return configFile;
-    }
-
-    public FileConfiguration getConfig() {
-        return config;
     }
 }

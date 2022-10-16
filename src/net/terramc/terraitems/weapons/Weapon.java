@@ -1,10 +1,9 @@
 package net.terramc.terraitems.weapons;
 
-import net.terramc.terraitems.effects.Effect;
+import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -17,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +27,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Weapon {
-    private String name;
-    private String title;
 
     private final ItemStack itemStack;
     private final ItemMeta meta;
     private List<TerraEffect> effects;
 
-    private List<String> customLore = new ArrayList<>();
-    private List<String> attributeLore = new ArrayList<>();
-    private List<String> effectLore = new ArrayList<>();
+    private final List<String> customLore = new ArrayList<>();
+    private final List<String> effectLore = new ArrayList<>();
 
     private final WeaponType weaponType;
     private final EquipmentMaterialType materialType;
@@ -85,9 +82,6 @@ public class Weapon {
                 String displayLore = effect.getMeta().getDisplay();
                 String[] l = displayLore.split("\n");
 
-                Bukkit.getLogger().warning(displayLore);
-                Bukkit.getLogger().warning(l.toString());
-
                 for (String ls : l) {
                     effectLore.add(ChatColor.translateAlternateColorCodes('&', "&a" + ls));
                 }
@@ -101,8 +95,10 @@ public class Weapon {
         lore.addAll(getWeaponInfoLore());
         lore.addAll(effectLore);
 
-        if (!effectLore.isEmpty())
+        if (!effectLore.isEmpty() && !customLore.isEmpty())
             lore.add("");
+
+        lore.addAll(customLore);
 
         meta.setLore(lore);
         this.itemStack.setItemMeta(meta);
@@ -128,9 +124,9 @@ public class Weapon {
 
     // Name is the name of the weapon as it were an entry in the weapons.yml
     public void setName(String name) {
-        this.name = name;
         PersistentDataContainer data  = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(Bukkit.getPluginManager().getPlugin("Terra-Items"), "weapon-name");
+        Plugin plugin = TerraItems.lookupTerraPlugin();
+        NamespacedKey key = new NamespacedKey(plugin, "weapon-name");
         data.set(key,
                 PersistentDataType.STRING,
                 name);
@@ -141,7 +137,6 @@ public class Weapon {
     // Title is the name of the weapon as it were set in the weapons.yml in combination with the color code of the
     // appropriate 'rarity' setting on the weapon
     public void setTitle(String title) {
-        this.title = title;
 
         if (meta != null) {
             if (rarity != Rarity.COMMON) {
@@ -239,20 +234,6 @@ public class Weapon {
             throw new IllegalStateException("Weapon Meta Object is null while setting enchantments");
         }
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Rarity getRarity() {
-        return rarity;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public WeaponType getWeaponType() { return weaponType; }
 
     public ItemStack getItemStack() {
         return itemStack;

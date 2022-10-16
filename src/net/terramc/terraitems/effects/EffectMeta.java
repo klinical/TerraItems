@@ -6,9 +6,9 @@ import java.util.Objects;
 
 public class EffectMeta {
 
-    private String userNotification;
-    private String targetNotification;
-    private String display;
+    private final String userNotification;
+    private final String targetNotification;
+    private final String display;
 
     public EffectMeta(String userNotification, String targetNotification, String display) {
         this.userNotification = userNotification;

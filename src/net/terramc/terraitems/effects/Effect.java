@@ -3,14 +3,16 @@ package net.terramc.terraitems.effects;
 import net.terramc.terraitems.shared.ConfigUtility;
 import net.terramc.terraitems.shared.EffectType;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
 public class Effect {
 
-    private EffectType effectType;
-    private int level;
-    private int duration;
+    private final EffectType effectType;
+    private PotionEffectType potionEffectType;
+    private final int level;
+    private final int duration;
 
     public Effect(EffectType effectType, int level, int duration) {
         this.effectType = effectType;
@@ -26,7 +28,22 @@ public class Effect {
 
         if (level <= 0)
             throw new IllegalArgumentException("invalid <=0 value for " + section + " level");
+
+        String potionEffect = section.getString("potion-type");
+        if (potionEffect != null) {
+            potionEffectType = PotionEffectType.getByName(potionEffect.toUpperCase());
+        }
     }
+
+
+    public PotionEffectType getPotionEffectType() {
+        return potionEffectType;
+    }
+
+    public boolean hasPotionEffectType() {
+        return potionEffectType != null;
+    }
+
 
     public EffectType getEffectType() {
         return effectType;

@@ -18,7 +18,7 @@ public enum WeaponType {
      * TODO: these default values being stored in a flat file such as JSON would probably be cleaner and easier
      * to maintain
      */
-    private static HashMap<EquipmentMaterialType, HashMap<WeaponType, Integer>> damageMap;
+    private static final HashMap<EquipmentMaterialType, HashMap<WeaponType, Integer>> damageMap;
     static {
         damageMap = new HashMap<>();
         HashMap<WeaponType, Integer> ironValues = new HashMap<>();
@@ -53,7 +53,7 @@ public enum WeaponType {
         netheriteValues.put(WeaponType.GLAIVE, 10);
     }
 
-    private static HashMap<EquipmentMaterialType, HashMap<WeaponType, Double>> speedMap;
+    private static final HashMap<EquipmentMaterialType, HashMap<WeaponType, Double>> speedMap;
     static {
         speedMap = new HashMap<>();
         HashMap<WeaponType, Double> ironValues = new HashMap<>();

@@ -1,24 +1,14 @@
 package net.terramc.terraitems.effects;
 
 import net.terramc.terraitems.effects.application.EffectApplication;
-import net.terramc.terraitems.effects.application.TimerApplication;
 import net.terramc.terraitems.effects.trigger.EffectTrigger;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public class TerraEffect {
-    private EffectApplication application;
-    private Effect effect;
-    private EffectTrigger trigger;
+    private final EffectApplication application;
+    private final Effect effect;
+    private final EffectTrigger trigger;
     private EffectMeta meta;
-    private String effectName;
+    private final String effectName;
 
     public TerraEffect(EffectApplication application, Effect effect, EffectTrigger trigger, String effectName) {
         this.application = application;
