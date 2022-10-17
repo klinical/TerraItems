@@ -1,27 +1,48 @@
 kitchen-knife:
   ## Required, case-insensitive
+  # material not required/used for ranged, only melee
   material: iron
+  # dagger,sword,axe,mace,staff,glaive,bow,crossbow,gun
   type: dagger
   ## Optional
-  title: "Kitchen Knife"
-  rarity: uncommon
-  lore:
-    - "&dStandard issue kitchen-ware."
-  effects:
-    - bleed-1
-  enchantments:
-    - sharpness 2
+  modifiers:
+    #attributes:
+      # - etc
+    effects:
+      - bleed-1
+    enchantments:
+      - sharpness 2
+  meta:
+    title: "Kitchen Knife"
+    rarity: uncommon
+    lore:
+      - "&dStandard issue kitchen-ware."
 
 muramasa:
   ## Required, case-insensitive
   material: netherite
   type: sword
   ## Optional
-  custom-model: 2
-  title: "Muramasa"
-  rarity: epic
-  effects:
-    - drain-1
-  enchantments:
-    - mending 1
-    - sharpness 3
+  meta:
+    custom-model: 2
+    title: "Muramasa"
+    rarity: epic
+  modifiers:
+    effects:
+      - drain-1
+    enchantments:
+      - mending 1
+      - sharpness 3
+
+thiefs-bow:
+  ## Required, case-insensitive
+  type: bow
+  ## Optional
+  meta:
+    title: "Thief's Bow"
+    rarity: rare
+  modifiers:
+    effects:
+      - poison-1
+    enchantments:
+      - power 2

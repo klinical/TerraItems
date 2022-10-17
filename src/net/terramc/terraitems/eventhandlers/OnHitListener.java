@@ -4,7 +4,7 @@ import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.WeaponsConfig;
 import net.terramc.terraitems.effects.EffectManager;
 import net.terramc.terraitems.effects.TerraEffect;
-import net.terramc.terraitems.weapons.Weapon;
+import net.terramc.terraitems.weapons.MeleeWeapon;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -51,8 +51,8 @@ public class OnHitListener implements Listener {
             if (weaponNameContainerEntry == null)
                 return;
 
-            Weapon weapon = weaponsConfig.getItems().get(weaponNameContainerEntry);
-            if (weapon == null) {
+            MeleeWeapon meleeWeapon = (MeleeWeapon) weaponsConfig.getItems().get(weaponNameContainerEntry);
+            if (meleeWeapon == null) {
                 plugin.getLogger().warning(
                         "Failed to look up weapon-name " +
                                 weaponNameContainerEntry +
@@ -63,10 +63,10 @@ public class OnHitListener implements Listener {
                 return;
             }
 
-            if (!weapon.hasCustomEffect())
+            if (!meleeWeapon.getWeaponModifiers().hasEffects())
                 return;
 
-            List<TerraEffect> effects = weapon.getEffects();
+            List<TerraEffect> effects = meleeWeapon.getWeaponModifiers().getEffects();
             for (TerraEffect effect : effects) {
                 if (successfulProcRoll(effect.getTrigger().getChance())) {
                     EffectManager.sendMetaNotificationMessages(user, target, effect.getMeta());

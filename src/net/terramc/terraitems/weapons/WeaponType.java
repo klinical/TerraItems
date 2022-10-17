@@ -10,9 +10,10 @@ public enum WeaponType {
     AXE,
     MACE,
     STAFF,
+    GLAIVE,
     BOW,
     CROSSBOW,
-    GLAIVE;
+    GUN;
 
     /**
      * TODO: these default values being stored in a flat file such as JSON would probably be cleaner and easier
@@ -28,8 +29,6 @@ public enum WeaponType {
         ironValues.put(WeaponType.AXE, 9);
         ironValues.put(WeaponType.MACE, 9);
         ironValues.put(WeaponType.STAFF, 6);
-        ironValues.put(WeaponType.BOW, 0);
-        ironValues.put(WeaponType.CROSSBOW, 0);
         ironValues.put(WeaponType.GLAIVE, 9);
         HashMap<WeaponType, Integer> diamondValues = new HashMap<>();
         damageMap.put(EquipmentMaterialType.DIAMOND, diamondValues);
@@ -38,8 +37,6 @@ public enum WeaponType {
         diamondValues.put(WeaponType.AXE, 9);
         diamondValues.put(WeaponType.MACE, 9);
         diamondValues.put(WeaponType.STAFF, 7);
-        diamondValues.put(WeaponType.BOW, 0);
-        diamondValues.put(WeaponType.CROSSBOW, 0);
         diamondValues.put(WeaponType.GLAIVE, 9);
         HashMap<WeaponType, Integer> netheriteValues = new HashMap<>();
         damageMap.put(EquipmentMaterialType.NETHERITE, netheriteValues);
@@ -48,8 +45,6 @@ public enum WeaponType {
         netheriteValues.put(WeaponType.AXE, 10);
         netheriteValues.put(WeaponType.MACE, 10);
         netheriteValues.put(WeaponType.STAFF, 8);
-        netheriteValues.put(WeaponType.BOW, 0);
-        netheriteValues.put(WeaponType.CROSSBOW, 0);
         netheriteValues.put(WeaponType.GLAIVE, 10);
     }
 
@@ -63,8 +58,6 @@ public enum WeaponType {
         ironValues.put(WeaponType.AXE, 0.9);
         ironValues.put(WeaponType.MACE, 0.9);
         ironValues.put(WeaponType.STAFF, 0.9);
-        ironValues.put(WeaponType.BOW, 0.0);
-        ironValues.put(WeaponType.CROSSBOW, 0.0);
         ironValues.put(WeaponType.GLAIVE, 0.9);
         HashMap<WeaponType, Double> diamondValues = new HashMap<>();
         speedMap.put(EquipmentMaterialType.DIAMOND, diamondValues);
@@ -73,8 +66,6 @@ public enum WeaponType {
         diamondValues.put(WeaponType.AXE, 0.9);
         diamondValues.put(WeaponType.MACE, 0.9);
         diamondValues.put(WeaponType.STAFF, 0.9);
-        diamondValues.put(WeaponType.BOW, 0.0);
-        diamondValues.put(WeaponType.CROSSBOW, 0.0);
         diamondValues.put(WeaponType.GLAIVE, 0.9);
         HashMap<WeaponType, Double> netheriteValues = new HashMap<>();
         speedMap.put(EquipmentMaterialType.NETHERITE, netheriteValues);
@@ -83,8 +74,6 @@ public enum WeaponType {
         netheriteValues.put(WeaponType.AXE, 1.0);
         netheriteValues.put(WeaponType.MACE, 1.0);
         netheriteValues.put(WeaponType.STAFF, 1.0);
-        netheriteValues.put(WeaponType.BOW, 0.0);
-        netheriteValues.put(WeaponType.CROSSBOW, 0.0);
         netheriteValues.put(WeaponType.GLAIVE, 1.0);
     }
 
@@ -105,8 +94,6 @@ public enum WeaponType {
             case MACE: return "Mace";
             case STAFF: return "Staff";
             case GLAIVE: return "Glaive";
-            case BOW: return "Bow";
-            case CROSSBOW: return "Crossbow";
         }
     }
 
@@ -119,8 +106,61 @@ public enum WeaponType {
             case MACE: return "AXE";
             case STAFF: return "SHOVEL";
             case GLAIVE: return "HOE";
-            case BOW: return "BOW";
-            case CROSSBOW: return "CROSSBOW";
+        }
+    }
+
+    public WeaponDamageType damageType() {
+        switch (this) {
+            case SWORD:
+            case DAGGER:
+            case AXE:
+            case MACE:
+            case STAFF:
+            case GLAIVE:
+            default:
+                return WeaponDamageType.MELEE;
+            case BOW:
+            case GUN:
+            case CROSSBOW:
+                return WeaponDamageType.RANGED;
+        }
+    }
+
+    public EquipmentMaterialType getDefaultMaterialType() {
+        switch (this) {
+            case SWORD:
+            case DAGGER:
+            case AXE:
+            case MACE:
+            case STAFF:
+            case GLAIVE:
+            default:
+                return EquipmentMaterialType.IRON;
+
+            case BOW:
+                return EquipmentMaterialType.BOW;
+            case CROSSBOW:
+                return EquipmentMaterialType.CROSSBOW;
+            case GUN:
+                return EquipmentMaterialType.GUN;
+        }
+    }
+
+    public int getDefaultModel() {
+        switch (this) {
+            case BOW:
+            case CROSSBOW:
+            case SWORD:
+            case AXE:
+            default:
+                return 0;
+
+            case DAGGER:
+            case MACE:
+            case STAFF:
+            case GLAIVE:
+            case GUN:
+                return 1;
         }
     }
 }

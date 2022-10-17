@@ -4,8 +4,8 @@ import net.terramc.terraitems.commands.ItemSpawn;
 import net.terramc.terraitems.commands.TerraConfig;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
+import net.terramc.terraitems.weapons.MeleeWeapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -68,10 +68,10 @@ public class TerraItems extends JavaPlugin {
         };
 
         for (EquipmentMaterialType material : materials) {
-            Weapon dagger = new Weapon(material, WeaponType.DAGGER);
-            Weapon mace = new Weapon(material, WeaponType.MACE);
-            Weapon staff = new Weapon(material, WeaponType.STAFF);
-            Weapon glaive = new Weapon(material, WeaponType.GLAIVE);
+            MeleeWeapon dagger = new MeleeWeapon("default-dagger", material, WeaponType.DAGGER);
+            MeleeWeapon mace = new MeleeWeapon("default-mace", material, WeaponType.MACE);
+            MeleeWeapon staff = new MeleeWeapon("default-staff", material, WeaponType.STAFF);
+            MeleeWeapon glaive = new MeleeWeapon("default-glaive", material, WeaponType.GLAIVE);
 
             ShapedRecipe[] recipes = {
                     new ShapedRecipe(
@@ -105,7 +105,7 @@ public class TerraItems extends JavaPlugin {
         return effectsConfig;
     }
 
-    public static Plugin lookupTerraPlugin() {
-        return Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
+    public static TerraItems lookupTerraPlugin() {
+        return (TerraItems) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
     }
 }

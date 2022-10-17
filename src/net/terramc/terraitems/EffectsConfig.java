@@ -55,6 +55,8 @@ public class EffectsConfig {
                     terraEffect.setTerraMeta(effectMeta);
                 }
 
+                logger.info("Loaded " + effectApplication.getApplicationType() + " effect " + effectTitle);
+
                 effects.put(effectTitle, terraEffect);
             } catch (IllegalArgumentException ex) {
                 logger.warning(ex.toString());

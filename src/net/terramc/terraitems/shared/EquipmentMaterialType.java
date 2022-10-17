@@ -4,6 +4,9 @@ import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Material;
 
 public enum EquipmentMaterialType {
+    BOW,
+    CROSSBOW,
+    GUN,
     IRON,
     DIAMOND,
     NETHERITE;
@@ -29,4 +32,6 @@ public enum EquipmentMaterialType {
             case NETHERITE: return Material.NETHERITE_INGOT;
         }
     }
+
+
 }
