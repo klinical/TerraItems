@@ -3,6 +3,8 @@ package net.terramc.terraitems.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.configuration.WeaponMeta;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -14,17 +16,25 @@ import java.util.*;
 
 public class MeleeWeapon extends Weapon {
 
-    public MeleeWeapon(String configKey, EquipmentMaterialType materialType, WeaponType weaponType) {
-        super(configKey, weaponType, materialType);
+    public MeleeWeapon(WeaponConfiguration configuration) {
+        super(configuration);
+
+        Objects.requireNonNull(configuration.getModifiers());
+        Objects.requireNonNull(configuration.getModifiers().getMaterialType());
     }
 
     protected String getDefaultDisplayName() {
-        String displayName = "&r" + materialType.getPrefix() + ' ' + weaponType.getDisplayName();
+        EquipmentMaterialType material = Objects.requireNonNull(configuration.getModifiers().getMaterialType());
+        WeaponType weaponType = configuration.getMeta().getWeaponType();
+        String displayName = "&r" + material.getPrefix() + ' ' + weaponType.getDisplayName();
 
         return ChatColor.translateAlternateColorCodes('&', displayName);
     }
 
     public List<String> getWeaponInfoLore() {
+        WeaponMeta weaponMeta = configuration.getMeta();
+        EquipmentMaterialType materialType = Objects.requireNonNull(configuration.getModifiers().getMaterialType());
+
         Rarity rarity = weaponMeta.getRarity();
 
         String loreLine = ChatColor.translateAlternateColorCodes(
@@ -33,11 +43,10 @@ public class MeleeWeapon extends Weapon {
                         rarity.getDisplayName() +
                         "&r &8" +
                         materialType.getPrefix() +
-                        " " + weaponType.getDisplayName());
+                        " " + weaponMeta.getWeaponType().getDisplayName());
 
         List<String> list = new ArrayList<>();
         list.add(loreLine);
-        list.add("");
 
         return list;
     }
@@ -45,6 +54,9 @@ public class MeleeWeapon extends Weapon {
     protected ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers() {
         ArrayListMultimap<Attribute, AttributeModifier> map = ArrayListMultimap.create();
         ItemMeta meta = Objects.requireNonNull(this.itemStack.getItemMeta());
+
+        WeaponType weaponType = configuration.getMeta().getWeaponType();
+        EquipmentMaterialType materialType = Objects.requireNonNull(configuration.getModifiers().getMaterialType());
 
         AttributeModifier damageModifier =  new AttributeModifier(
                 UUID.randomUUID(),

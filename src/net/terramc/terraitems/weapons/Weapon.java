@@ -1,41 +1,50 @@
 package net.terramc.terraitems.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import net.terramc.terraitems.TerraItems;
+import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
-import org.bukkit.Bukkit;
+import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
+import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.configuration.WeaponMeta;
+import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class Weapon {
-    protected final WeaponType weaponType;
-    protected final EquipmentMaterialType materialType;
 
-    protected WeaponMeta weaponMeta;
-    protected WeaponModifiers weaponModifiers;
-
+    protected final WeaponConfiguration configuration;
     protected final ItemStack itemStack;
 
-    public Weapon(String configKey, WeaponType weaponType, EquipmentMaterialType materialType) {
-        this.weaponType = weaponType;
-        this.materialType = materialType;
-        this.itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
+    public Weapon(WeaponConfiguration configuration) {
+        this.configuration = configuration;
+
+        WeaponType weaponType = configuration.getMeta().getWeaponType();
+        EquipmentMaterialType materialType = configuration.getModifiers().getMaterialType();
+
+        if (materialType != null) {
+            this.itemStack = new ItemStack(configuration.getModifiers().getMaterialType().getWeaponMaterial(weaponType));
+        } else {
+            this.itemStack = new ItemStack(weaponType.getDefaultMaterialType().getWeaponMaterial(weaponType));
+        }
 
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
 
@@ -43,21 +52,19 @@ public abstract class Weapon {
         lore.add("");
         meta.setLore(lore);
 
-        meta.setCustomModelData(weaponType.getDefaultModel());
+        meta.setCustomModelData(configuration.getMeta().getCustomModel());
         meta.setAttributeModifiers(getDefaultModifiers());
         meta.setDisplayName(getDefaultDisplayName());
 
+        setWeaponMeta(configuration.getMeta(), meta);
+        setWeaponModifiers(configuration.getModifiers(), meta);
+        setEnchantments(configuration.getModifiers().getEnchantments(), meta);
+
         PersistentDataContainer data  = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), "weapon-name");
-        data.set(key, PersistentDataType.STRING,configKey);
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), "weapon");
+        data.set(key, TerraWeaponPersistentDataType.DATA_TYPE, configuration);
 
         this.itemStack.setItemMeta(meta);
-    }
-
-    public Weapon(String configKey, WeaponType weaponType) {
-        this.weaponType = weaponType;
-        this.materialType = weaponType.getDefaultMaterialType();
-        this.itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
     }
 
     public abstract List<String> getWeaponInfoLore();
@@ -66,11 +73,9 @@ public abstract class Weapon {
 
     protected abstract ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers();
 
-    public void setWeaponMeta(@Nonnull WeaponMeta weaponMeta) {
-        this.weaponMeta = weaponMeta;
-
+    private void setWeaponMeta(@Nonnull WeaponMeta weaponMeta, ItemMeta meta) {
         Rarity rarity = weaponMeta.getRarity();
-        ItemMeta meta = itemStack.getItemMeta();
+
         if (meta == null)
             throw new IllegalStateException("ItemStack Meta object is null while setting WeaponMeta " + weaponMeta);
 
@@ -89,47 +94,50 @@ public abstract class Weapon {
                     .map(l -> ChatColor.translateAlternateColorCodes('&', l))
                     .collect(Collectors.toList());
 
+            lore.add("");
             lore.addAll(translatedCustomLore);
         }
 
         meta.setCustomModelData(weaponMeta.getCustomModel());
 
         meta.setLore(lore);
-        this.itemStack.setItemMeta(meta);
     }
 
-    public void setWeaponModifiers(@Nonnull WeaponModifiers weaponModifiers) {
-        this.weaponModifiers = weaponModifiers;
-        ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
+    private Multimap<Attribute, AttributeModifier> buildModifiers(List<AttributeConfiguration> configurations) {
+        Multimap<Attribute, AttributeModifier> modifiers = ArrayListMultimap.create();
 
+        for (AttributeConfiguration configuration : configurations) {
+            for (String slot : configuration.getSlots()) {
+                AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),
+                        slot + "-" + configuration.getAttribute(), configuration.getValue(),
+                        AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(slot.toUpperCase()));
+
+                modifiers.put(configuration.getAttribute(), modifier);
+            }
+        }
+
+        return modifiers;
+    }
+
+    private void setWeaponModifiers(@Nonnull WeaponModifiers weaponModifiers, ItemMeta meta) {
         if (weaponModifiers.hasEnchantments())
             setEnchantments(weaponModifiers.getEnchantments(), meta);
 
-        if (weaponModifiers.hasAttributeModifiers())
-            meta.setAttributeModifiers(weaponModifiers.getAttributeModifiers());
+        if (weaponModifiers.hasAttributeConfigurations())
+            meta.setAttributeModifiers(buildModifiers(weaponModifiers.getAttributeConfigurations()));
 
         if (weaponModifiers.hasEffects() && weaponModifiers.hasEffectLore()) {
             setEffectLore(weaponModifiers.getEffectLore(), meta);
         }
-
-        this.itemStack.setItemMeta(meta);
     }
 
     private void setEffectLore(List<String> effectLore, @Nonnull ItemMeta itemMeta) {
         List<String> lore = Objects.requireNonNull(itemMeta.getLore());
-        List<String> weaponInfoLore = lore.subList(0, 3);
-        List<String> theRest = lore.subList(3, lore.size());
 
-        List<String> newLore = new ArrayList<>();
+        lore.add("");
+        lore.addAll(effectLore);
 
-        newLore.addAll(weaponInfoLore);
-        newLore.addAll(effectLore);
-        if (!theRest.isEmpty()) {
-            newLore.add("");
-            newLore.addAll(theRest);
-        }
-
-        itemMeta.setLore(newLore);
+        itemMeta.setLore(lore);
     }
 
     private void setEnchantments(List<String> enchantmentStringList, ItemMeta meta) {
@@ -153,31 +161,11 @@ public abstract class Weapon {
         }
     }
 
-    public boolean hasWeaponMeta() {
-        return weaponMeta != null;
-    }
-
-    public boolean hasWeaponModifiers() {
-        return weaponModifiers != null;
+    public WeaponConfiguration getConfiguration() {
+        return configuration;
     }
 
     public ItemStack getItemStack() {
         return itemStack;
-    }
-
-    public WeaponType getWeaponType() {
-        return weaponType;
-    }
-
-    public EquipmentMaterialType getMaterialType() {
-        return materialType;
-    }
-
-    public WeaponMeta getWeaponMeta() {
-        return weaponMeta;
-    }
-
-    public WeaponModifiers getWeaponModifiers() {
-        return weaponModifiers;
     }
 }

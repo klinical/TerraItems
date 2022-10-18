@@ -1,44 +1,45 @@
-package net.terramc.terraitems.weapons;
+package net.terramc.terraitems.weapons.configuration;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.effects.TerraEffect;
-import org.bukkit.Bukkit;
+import net.terramc.terraitems.shared.AttributeConfiguration;
+import net.terramc.terraitems.shared.EquipmentMaterialType;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.EquipmentSlot;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class WeaponModifiers {
+    @Nullable private final EquipmentMaterialType materialType;
     private final List<TerraEffect> effects = new ArrayList<>();
     private final List<String> effectLore = new ArrayList<>();
-    private final Multimap<Attribute, AttributeModifier> attributeModifiers = ArrayListMultimap.create();
+    private final List<AttributeConfiguration> attributeConfigurations;
     private final List<String> enchantments;
 
     public WeaponModifiers(ConfigurationSection section) {
         enchantments = section.getStringList("enchantments");
+        attributeConfigurations = new ArrayList<>();
+
+        String materialTypeString = section.getString("material");
         List<String> effectsStringList = section.getStringList("effects");
         List<String> attributesStringList = section.getStringList("attributes");
+
+        materialType = (materialTypeString != null) ?
+                EquipmentMaterialType.valueOf(materialTypeString.toUpperCase()) :
+                null;
 
         if (!(attributesStringList.isEmpty())) {
             for (String attribute : attributesStringList) {
                 int amount = section.getInt("value");
                 List<String> slots = section.getStringList("slots");
+                Attribute attributeParsed = Attribute.valueOf(attribute.toUpperCase());
 
-                for (String slot : slots) {
-                    AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),
-                            slot + "-" + attribute, amount,
-                            AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.valueOf(slot.toUpperCase()));
-
-                    attributeModifiers.put(Attribute.valueOf(attribute.toUpperCase()), modifier);
-                }
+                this.attributeConfigurations.add(new AttributeConfiguration(attributeParsed, amount, slots));
             }
         }
 
@@ -63,12 +64,24 @@ public class WeaponModifiers {
         }
     }
 
+    public WeaponModifiers(EquipmentMaterialType type) {
+        Objects.requireNonNull(type);
+        this.materialType = type;
+
+        this.attributeConfigurations = new ArrayList<>();
+        this.enchantments = new ArrayList<>();
+    }
+
+    public boolean hasMaterialType() {
+        return materialType != null;
+    }
+
     public boolean hasEffects() {
         return !effects.isEmpty();
     }
 
-    public boolean hasAttributeModifiers() {
-        return !attributeModifiers.isEmpty();
+    public boolean hasAttributeConfigurations() {
+        return !attributeConfigurations.isEmpty();
     }
 
     public boolean hasEnchantments() {
@@ -87,8 +100,12 @@ public class WeaponModifiers {
         return effects;
     }
 
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers() {
-        return attributeModifiers;
+    public List<AttributeConfiguration> getAttributeConfigurations() {
+        return attributeConfigurations;
+    }
+
+    public @Nullable EquipmentMaterialType getMaterialType() {
+        return materialType;
     }
 
     public List<String> getEnchantments() {

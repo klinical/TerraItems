@@ -1,6 +1,5 @@
-package net.terramc.terraitems.effects.application;
+package net.terramc.terraitems.effects.configuration;
 
-import net.terramc.terraitems.effects.Effect;
 import net.terramc.terraitems.effects.TerraEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;

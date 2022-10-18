@@ -2,6 +2,7 @@ package net.terramc.terraitems.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -10,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RangedWeapon extends Weapon {
-    public RangedWeapon(String configKey, WeaponType weaponType) {
-        super(configKey, weaponType);
+    public RangedWeapon(WeaponConfiguration configuration) {
+        super(configuration);
     }
 
     @Override
     public List<String> getWeaponInfoLore() {
-        Rarity rarity = weaponMeta.getRarity();
+        WeaponType weaponType = configuration.getMeta().getWeaponType();
+        Rarity rarity = configuration.getMeta().getRarity();
 
         String loreLine = ChatColor.translateAlternateColorCodes(
                 '&',
@@ -26,14 +28,15 @@ public class RangedWeapon extends Weapon {
 
         List<String> loreList = new ArrayList<>();
         loreList.add(loreLine);
-        loreList.add("");
 
         return loreList;
     }
 
     @Override
     protected String getDefaultDisplayName() {
-        String displayName = "&r" + materialType.getPrefix() + ' ' + weaponType.getDisplayName();
+        WeaponType weaponType = configuration.getMeta().getWeaponType();
+
+        String displayName = "&r" + weaponType.getDefaultMaterialType().getPrefix() + ' ' + weaponType.getDisplayName();
 
         return ChatColor.translateAlternateColorCodes('&', displayName);
     }

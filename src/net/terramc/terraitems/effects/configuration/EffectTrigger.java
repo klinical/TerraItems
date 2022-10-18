@@ -1,5 +1,6 @@
-package net.terramc.terraitems.effects.trigger;
+package net.terramc.terraitems.effects.configuration;
 
+import net.terramc.terraitems.effects.EffectTriggerType;
 import net.terramc.terraitems.shared.ItemType;
 import net.terramc.terraitems.shared.ConfigUtility;
 import org.bukkit.configuration.ConfigurationSection;

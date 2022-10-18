@@ -94,6 +94,9 @@ public enum WeaponType {
             case MACE: return "Mace";
             case STAFF: return "Staff";
             case GLAIVE: return "Glaive";
+            case BOW: return "Bow";
+            case CROSSBOW: return "Crossbow";
+            case GUN: return "Gun";
         }
     }
 
@@ -106,6 +109,9 @@ public enum WeaponType {
             case MACE: return "AXE";
             case STAFF: return "SHOVEL";
             case GLAIVE: return "HOE";
+            case BOW: return "BOW";
+            case GUN:
+            case CROSSBOW: return "CROSSBOW";
         }
     }
 

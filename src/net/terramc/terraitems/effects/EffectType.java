@@ -1,4 +1,4 @@
-package net.terramc.terraitems.shared;
+package net.terramc.terraitems.effects;
 
 public enum EffectType {
     POTION,

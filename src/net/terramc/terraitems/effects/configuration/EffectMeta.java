@@ -1,4 +1,4 @@
-package net.terramc.terraitems.effects;
+package net.terramc.terraitems.effects.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -9,12 +9,6 @@ public class EffectMeta {
     private final String userNotification;
     private final String targetNotification;
     private final String display;
-
-    public EffectMeta(String userNotification, String targetNotification, String display) {
-        this.userNotification = userNotification;
-        this.targetNotification = targetNotification;
-        this.display = display;
-    }
 
     public EffectMeta(ConfigurationSection section) {
         Objects.requireNonNull(section);

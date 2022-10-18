@@ -1,8 +1,9 @@
 package net.terramc.terraitems;
 
-import net.terramc.terraitems.effects.*;
-import net.terramc.terraitems.effects.application.EffectApplication;
-import net.terramc.terraitems.effects.trigger.EffectTrigger;
+import net.terramc.terraitems.effects.configuration.EffectApplication;
+import net.terramc.terraitems.effects.configuration.Effect;
+import net.terramc.terraitems.effects.configuration.EffectMeta;
+import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.ConfigUtility;
 import net.terramc.terraitems.effects.TerraEffect;
 import org.bukkit.configuration.ConfigurationSection;

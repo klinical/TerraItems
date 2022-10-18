@@ -1,7 +1,8 @@
-package net.terramc.terraitems.effects.application;
+package net.terramc.terraitems.effects.configuration;
 
+import net.terramc.terraitems.effects.EffectApplicationType;
 import net.terramc.terraitems.shared.ConfigUtility;
-import net.terramc.terraitems.shared.EffectTargetType;
+import net.terramc.terraitems.effects.EffectTargetType;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
@@ -10,11 +11,6 @@ public class EffectApplication {
     private final EffectApplicationType applicationType;
     private final EffectTargetType targetType;
     private int procRate;
-
-    public EffectApplication(EffectApplicationType applicationType, EffectTargetType targetType) {
-        this.applicationType = applicationType;
-        this.targetType = targetType;
-    }
 
     public EffectApplication(ConfigurationSection section) throws IllegalArgumentException {
         Objects.requireNonNull(section);

@@ -1,6 +1,8 @@
-package net.terramc.terraitems.effects;
+package net.terramc.terraitems.effects.manager;
 
-import net.terramc.terraitems.effects.application.EffectApplicationInstance;
+import net.terramc.terraitems.effects.configuration.EffectMeta;
+import net.terramc.terraitems.effects.TerraEffect;
+import net.terramc.terraitems.effects.configuration.EffectApplicationInstance;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
@@ -95,9 +97,9 @@ public class EffectManager {
                 20L * effect.getApplication().getProcRate()
         );
 
-        int effectCancelTask = scheduler.scheduleSyncDelayedTask(plugin, () -> {
-            scheduler.cancelTask(effectTask);
-        }, 20L * effect.getEffect().getDuration());
+        int effectCancelTask = scheduler.scheduleSyncDelayedTask(plugin, () ->
+            scheduler.cancelTask(effectTask)
+        , 20L * effect.getEffect().getDuration());
 
         effectApplications.put(effectName, new EffectTaskPair(effectTask, effectCancelTask));
     }

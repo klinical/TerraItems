@@ -1,9 +1,13 @@
 package net.terramc.terraitems.effects;
 
-import net.terramc.terraitems.effects.application.EffectApplication;
-import net.terramc.terraitems.effects.trigger.EffectTrigger;
+import net.terramc.terraitems.effects.configuration.EffectApplication;
+import net.terramc.terraitems.effects.configuration.Effect;
+import net.terramc.terraitems.effects.configuration.EffectMeta;
+import net.terramc.terraitems.effects.configuration.EffectTrigger;
 
-public class TerraEffect {
+import java.io.Serializable;
+
+public class TerraEffect implements Serializable {
     private final EffectApplication application;
     private final Effect effect;
     private final EffectTrigger trigger;

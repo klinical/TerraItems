@@ -1,18 +1,18 @@
 kitchen-knife:
-  ## Required, case-insensitive
-  # material not required/used for ranged, only melee
-  material: iron
-  # dagger,sword,axe,mace,staff,glaive,bow,crossbow,gun
-  type: dagger
-  ## Optional
   modifiers:
+    # material not required/used for ranged, only melee
+    material: iron
     #attributes:
-      # - etc
+      #value: 5
+      #slots:
+        # - etc
     effects:
       - bleed-1
     enchantments:
       - sharpness 2
   meta:
+    # dagger,sword,axe,mace,staff,glaive,bow,crossbow,gun
+    type: dagger
     title: "Kitchen Knife"
     rarity: uncommon
     lore:
@@ -42,7 +42,5 @@ thiefs-bow:
     title: "Thief's Bow"
     rarity: rare
   modifiers:
-    effects:
-      - poison-1
     enchantments:
       - power 2

@@ -1,10 +1,11 @@
 package net.terramc.terraitems;
 
-import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.shared.ConfigUtility;
-import net.terramc.terraitems.shared.EquipmentMaterialType;
-import net.terramc.terraitems.shared.Rarity;
 import net.terramc.terraitems.weapons.*;
+import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.configuration.WeaponMeta;
+import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,7 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class WeaponsConfig {
     private final FileConfiguration config;
@@ -34,31 +34,25 @@ public class WeaponsConfig {
         Logger logger = plugin.getLogger();
 
         try {
-            String materialString = config.getString(itemName + ".material");
-            EquipmentMaterialType weaponMaterial = (materialString == null) ?
-                    weaponType.getDefaultMaterialType() :
-                    EquipmentMaterialType.valueOf(materialString.toUpperCase());
+            ConfigurationSection metaSection = Objects.requireNonNull(config.getConfigurationSection(itemName + ".meta"));
+            WeaponMeta meta = new WeaponMeta(metaSection);
 
-            Weapon weapon = null;
-            switch (weaponType.damageType()) {
-                case MELEE:
-                    weapon = new MeleeWeapon(itemName, weaponMaterial, weaponType);
-                    break;
-                case RANGED:
-                    weapon = new RangedWeapon(itemName, weaponType);
-                    break;
-            }
-
-            ConfigurationSection metaSection = config.getConfigurationSection(itemName + ".meta");
-            if (metaSection != null)
-                weapon.setWeaponMeta(new WeaponMeta(metaSection, weaponType));
+            WeaponConfiguration configuration = new WeaponConfiguration(itemName, meta);
 
             ConfigurationSection modifierSection = config.getConfigurationSection(itemName + ".modifiers");
             if (modifierSection != null)
-                weapon.setWeaponModifiers(new WeaponModifiers(modifierSection));
+                configuration.setWeaponModifiers(new WeaponModifiers(modifierSection));
 
-            logger.info("Loaded " + weaponType + " " + itemName);
-            items.put(itemName, weapon);
+            switch (weaponType.damageType()) {
+                case MELEE:
+                    items.put(itemName, new MeleeWeapon(configuration));
+                    break;
+                case RANGED:
+                    items.put(itemName, new RangedWeapon(configuration));
+                    break;
+            }
+
+            Bukkit.getLogger().info("Loaded " + weaponType + " " + itemName);
         } catch (IllegalArgumentException | IllegalStateException ex) {
             logger.warning("Encountered exception when parsing weapon [" + itemName + "].");
             logger.warning(ex.getMessage());
@@ -72,7 +66,7 @@ public class WeaponsConfig {
         Set<String> sectionEntries = config.getKeys(false);
 
         for (String itemName : sectionEntries) {
-            String weaponTypeString = Objects.requireNonNull(config.getString(itemName + ".type"));
+            String weaponTypeString = Objects.requireNonNull(config.getString(itemName + ".meta.type"));
             WeaponType weaponType = WeaponType.valueOf(weaponTypeString.toUpperCase());
 
             registerWeapon(itemName, weaponType);

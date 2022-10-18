@@ -21,7 +21,20 @@ public enum EquipmentMaterialType {
     }
 
     public Material getWeaponMaterial(WeaponType type) {
-        return Material.valueOf(this.toString() + '_' + type.getVanillaItemName());
+        switch (this) {
+            case BOW:
+            case CROSSBOW:
+                return Material.valueOf(this.toString());
+
+            case GUN:
+                return Material.CROSSBOW;
+
+            default:
+            case IRON:
+            case DIAMOND:
+            case NETHERITE:
+                return Material.valueOf(this.toString() + '_' + type.getVanillaItemName());
+        }
     }
 
     public Material getIngot() {

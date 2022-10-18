@@ -1,17 +1,23 @@
 package net.terramc.terraitems;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.terramc.terraitems.commands.ItemSpawn;
 import net.terramc.terraitems.commands.TerraConfig;
+import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
+import net.terramc.terraitems.shared.PotionEffectTypeDeserializer;
 import net.terramc.terraitems.weapons.MeleeWeapon;
+import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -19,6 +25,7 @@ public class TerraItems extends JavaPlugin {
 
     private WeaponsConfig weaponsConfig;
     private EffectsConfig effectsConfig;
+    private static final Gson gson = buildGson();
 
     @Override
     public void onDisable() {
@@ -55,23 +62,23 @@ public class TerraItems extends JavaPlugin {
     }
 
     private void initEventHandlers() {
-        getServer().getPluginManager().registerEvents(new OnHitListener(
-                        weaponsConfig, this),
-                this
-        );
+        PluginManager manager = getServer().getPluginManager();
+
+        manager.registerEvents(new OnHitListener(), this);
+        manager.registerEvents(new EntityShootBowHandler(), this);
     }
 
-    // Add base item crafting recipes for custom items - were gonna need a better way to do this
+    // Add base item crafting recipes for custom items - we're going to need a better way to do this
     private void initCraftingRecipes() {
         EquipmentMaterialType[] materials = {
                 EquipmentMaterialType.IRON, EquipmentMaterialType.DIAMOND, EquipmentMaterialType.NETHERITE
         };
 
         for (EquipmentMaterialType material : materials) {
-            MeleeWeapon dagger = new MeleeWeapon("default-dagger", material, WeaponType.DAGGER);
-            MeleeWeapon mace = new MeleeWeapon("default-mace", material, WeaponType.MACE);
-            MeleeWeapon staff = new MeleeWeapon("default-staff", material, WeaponType.STAFF);
-            MeleeWeapon glaive = new MeleeWeapon("default-glaive", material, WeaponType.GLAIVE);
+            MeleeWeapon dagger = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.DAGGER));
+            MeleeWeapon mace = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.MACE));
+            MeleeWeapon staff = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.STAFF));
+            MeleeWeapon glaive = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.GLAIVE));
 
             ShapedRecipe[] recipes = {
                     new ShapedRecipe(
@@ -107,5 +114,15 @@ public class TerraItems extends JavaPlugin {
 
     public static TerraItems lookupTerraPlugin() {
         return (TerraItems) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
+    }
+
+    private static Gson buildGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(PotionEffectType.class, new PotionEffectTypeDeserializer());
+        return gsonBuilder.create();
+    }
+
+    public static Gson getGson() {
+        return gson;
     }
 }

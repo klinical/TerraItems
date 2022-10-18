@@ -1,4 +1,4 @@
-package net.terramc.terraitems.effects.application;
+package net.terramc.terraitems.effects;
 
 public enum EffectApplicationType {
     TIMER,

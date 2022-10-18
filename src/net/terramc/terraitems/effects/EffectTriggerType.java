@@ -1,4 +1,4 @@
-package net.terramc.terraitems.effects.trigger;
+package net.terramc.terraitems.effects;
 
 public enum EffectTriggerType {
     HIT,

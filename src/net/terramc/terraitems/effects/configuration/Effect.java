@@ -1,7 +1,7 @@
-package net.terramc.terraitems.effects;
+package net.terramc.terraitems.effects.configuration;
 
+import net.terramc.terraitems.effects.EffectType;
 import net.terramc.terraitems.shared.ConfigUtility;
-import net.terramc.terraitems.shared.EffectType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.potion.PotionEffectType;
 
@@ -13,12 +13,6 @@ public class Effect {
     private PotionEffectType potionEffectType;
     private final int level;
     private final int duration;
-
-    public Effect(EffectType effectType, int level, int duration) {
-        this.effectType = effectType;
-        this.level = level;
-        this.duration = duration;
-    }
 
     public Effect(ConfigurationSection section) throws IllegalArgumentException {
         Objects.requireNonNull(section);

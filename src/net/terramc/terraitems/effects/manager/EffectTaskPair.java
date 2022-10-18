@@ -1,4 +1,4 @@
-package net.terramc.terraitems.effects;
+package net.terramc.terraitems.effects.manager;
 
 public class EffectTaskPair {
     private final int effectTaskId;

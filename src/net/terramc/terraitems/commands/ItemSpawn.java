@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 
 public class ItemSpawn implements CommandExecutor {
 
@@ -38,6 +41,16 @@ public class ItemSpawn implements CommandExecutor {
                             player.sendMessage("Invalid number of arguments (2 - 3).");
                         }
                         break;
+                    case "list":
+                        if (Objects.equals(args[1], "weapons")) {
+                            Set<String> itemKeys = plugin.getWeaponsConfig().getItems().keySet();
+
+                            player.sendMessage(Arrays.toString(itemKeys.toArray()));
+                        } else if (Objects.equals(args[1], "effects")) {
+                            Set<String> itemKeys = plugin.getEffectsConfig().getItems().keySet();
+
+                            player.sendMessage(Arrays.toString(itemKeys.toArray()));
+                        }
 
                     case "add":
                     case "modify":
