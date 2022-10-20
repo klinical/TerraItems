@@ -1,7 +1,8 @@
 kitchen-knife:
+  type: dagger
+  # material not required/used for ranged, only melee
+  material: iron
   modifiers:
-    # material not required/used for ranged, only melee
-    material: iron
     #attributes:
       #value: 5
       #slots:
@@ -11,36 +12,20 @@ kitchen-knife:
     enchantments:
       - sharpness 2
   meta:
-    # dagger,sword,axe,mace,staff,glaive,bow,crossbow,gun
-    type: dagger
     title: "Kitchen Knife"
     rarity: uncommon
     lore:
       - "&dStandard issue kitchen-ware."
 
-muramasa:
-  ## Required, case-insensitive
-  material: netherite
-  type: sword
-  ## Optional
-  meta:
-    custom-model: 2
-    title: "Muramasa"
-    rarity: epic
+heavy-blunderbuss:
+  type: gun
   modifiers:
+    reload-speed: 35
+    projectile-damage: 9
     effects:
-      - drain-1
-    enchantments:
-      - mending 1
-      - sharpness 3
-
-thiefs-bow:
-  ## Required, case-insensitive
-  type: bow
-  ## Optional
+      - bleed-1
   meta:
-    title: "Thief's Bow"
-    rarity: rare
-  modifiers:
-    enchantments:
-      - power 2
+    title: "Kitchen Knife"
+    rarity: uncommon
+    lore:
+      - "&dStandard issue kitchen-ware."

@@ -2,6 +2,7 @@ package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.effects.TerraEffect;
+import net.terramc.terraitems.shared.NamespaceKeys;
 import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
 import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import org.bukkit.NamespacedKey;
@@ -34,7 +35,7 @@ public class EntityShootBowHandler implements Listener {
 
         PersistentDataContainer bowDataContainer = bowMeta.getPersistentDataContainer();
         WeaponConfiguration weapon = bowDataContainer.get(
-                new NamespacedKey(TerraItems.lookupTerraPlugin(),"weapon"),
+                new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY),
                 TerraWeaponPersistentDataType.DATA_TYPE);
 
         if (weapon == null)
@@ -43,10 +44,9 @@ public class EntityShootBowHandler implements Listener {
         if (!weapon.getModifiers().hasEffects())
             return;
 
-        List<TerraEffect> effectList = weapon.getModifiers().getEffects();
-        event.getProjectile().setMetadata("effects", new FixedMetadataValue(
+        event.getProjectile().setMetadata(NamespaceKeys.WEAPON_KEY, new FixedMetadataValue(
                 TerraItems.lookupTerraPlugin(),
-                effectList
+                weapon
         ));
     }
 }

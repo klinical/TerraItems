@@ -3,10 +3,7 @@ package net.terramc.terraitems.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.shared.AttributeConfiguration;
-import net.terramc.terraitems.shared.EquipmentMaterialType;
-import net.terramc.terraitems.shared.Rarity;
-import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
+import net.terramc.terraitems.shared.*;
 import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import net.terramc.terraitems.weapons.configuration.WeaponMeta;
 import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
@@ -37,11 +34,11 @@ public abstract class Weapon {
     public Weapon(WeaponConfiguration configuration) {
         this.configuration = configuration;
 
-        WeaponType weaponType = configuration.getMeta().getWeaponType();
-        EquipmentMaterialType materialType = configuration.getModifiers().getMaterialType();
+        WeaponType weaponType = configuration.getWeaponType();
+        EquipmentMaterialType materialType = configuration.getMaterialType();
 
         if (materialType != null) {
-            this.itemStack = new ItemStack(configuration.getModifiers().getMaterialType().getWeaponMaterial(weaponType));
+            this.itemStack = new ItemStack(configuration.getMaterialType().getWeaponMaterial(weaponType));
         } else {
             this.itemStack = new ItemStack(weaponType.getDefaultMaterialType().getWeaponMaterial(weaponType));
         }
@@ -61,7 +58,7 @@ public abstract class Weapon {
         setEnchantments(configuration.getModifiers().getEnchantments(), meta);
 
         PersistentDataContainer data  = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), "weapon");
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
         data.set(key, TerraWeaponPersistentDataType.DATA_TYPE, configuration);
 
         this.itemStack.setItemMeta(meta);

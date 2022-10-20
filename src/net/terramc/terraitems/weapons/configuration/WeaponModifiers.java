@@ -1,79 +1,52 @@
 package net.terramc.terraitems.weapons.configuration;
 
-import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
-import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.ConfigurationSection;
+import net.terramc.terraitems.weapons.WeaponType;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class WeaponModifiers {
-    @Nullable private final EquipmentMaterialType materialType;
-    private final List<TerraEffect> effects = new ArrayList<>();
-    private final List<String> effectLore = new ArrayList<>();
-    private final List<AttributeConfiguration> attributeConfigurations;
-    private final List<String> enchantments;
+    private List<TerraEffect> effects = new ArrayList<>();
+    private List<String> effectLore = new ArrayList<>();
+    private List<AttributeConfiguration> attributeConfigurations = new ArrayList<>();
+    private List<String> enchantments = new ArrayList<>();
+    private Integer projectileDamage;
+    private Integer reloadSpeed;
+    private WeaponType weaponType;
 
-    public WeaponModifiers(ConfigurationSection section) {
-        enchantments = section.getStringList("enchantments");
-        attributeConfigurations = new ArrayList<>();
+    public void setProjectileDamage(Integer projectileDamage) {
+        this.projectileDamage = projectileDamage;
+    }
 
-        String materialTypeString = section.getString("material");
-        List<String> effectsStringList = section.getStringList("effects");
-        List<String> attributesStringList = section.getStringList("attributes");
+    public void setReloadSpeed(Integer reloadSpeed) {
+        this.reloadSpeed = reloadSpeed;
+    }
 
-        materialType = (materialTypeString != null) ?
-                EquipmentMaterialType.valueOf(materialTypeString.toUpperCase()) :
-                null;
+    public Integer getProjectileDamage() {
+        return projectileDamage;
+    }
 
-        if (!(attributesStringList.isEmpty())) {
-            for (String attribute : attributesStringList) {
-                int amount = section.getInt("value");
-                List<String> slots = section.getStringList("slots");
-                Attribute attributeParsed = Attribute.valueOf(attribute.toUpperCase());
+    public Integer getReloadSpeed() {
+        return reloadSpeed;
+    }
 
-                this.attributeConfigurations.add(new AttributeConfiguration(attributeParsed, amount, slots));
-            }
-        }
+    public WeaponModifiers(WeaponType weaponType) {
+        this.weaponType = weaponType;
+    }
 
-        if (!(effectsStringList.isEmpty())) {
-            List<TerraEffect> parsedEffects = effectsStringList
-                    .stream()
-                    .map(effect -> TerraItems.lookupTerraPlugin().getEffectsConfig().getItems().get(effect))
-                    .collect(Collectors.toList());
-
-            for (TerraEffect effect : parsedEffects) {
-                if (effect.getMeta() != null && effect.getMeta().getDisplay() != null) {
-                    String displayLore = effect.getMeta().getDisplay();
-                    String[] l = displayLore.split("\n");
-
-                    for (String ls : l) {
-                        effectLore.add(ChatColor.translateAlternateColorCodes('&', "&a" + ls));
-                    }
-                }
-
-                effects.add(effect);
-            }
-        }
+    public WeaponType getWeaponType() {
+        return weaponType;
     }
 
     public WeaponModifiers(EquipmentMaterialType type) {
         Objects.requireNonNull(type);
-        this.materialType = type;
 
         this.attributeConfigurations = new ArrayList<>();
         this.enchantments = new ArrayList<>();
-    }
-
-    public boolean hasMaterialType() {
-        return materialType != null;
     }
 
     public boolean hasEffects() {
@@ -104,11 +77,23 @@ public class WeaponModifiers {
         return attributeConfigurations;
     }
 
-    public @Nullable EquipmentMaterialType getMaterialType() {
-        return materialType;
-    }
-
     public List<String> getEnchantments() {
         return enchantments;
+    }
+
+    public void setEffects(List<TerraEffect> effects) {
+        this.effects = effects;
+    }
+
+    public void setEffectLore(List<String> effectLore) {
+        this.effectLore = effectLore;
+    }
+
+    public void setAttributeConfigurations(List<AttributeConfiguration> attributeConfigurations) {
+        this.attributeConfigurations = attributeConfigurations;
+    }
+
+    public void setEnchantments(List<String> enchantments) {
+        this.enchantments = enchantments;
     }
 }

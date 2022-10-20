@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder;
 import net.terramc.terraitems.commands.ItemSpawn;
 import net.terramc.terraitems.commands.TerraConfig;
 import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
+import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
+import net.terramc.terraitems.recipe.CopperBullet;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.PotionEffectTypeDeserializer;
-import net.terramc.terraitems.weapons.MeleeWeapon;
+import net.terramc.terraitems.weapons.melee.MeleeWeapon;
 import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Bukkit;
@@ -66,6 +68,7 @@ public class TerraItems extends JavaPlugin {
 
         manager.registerEvents(new OnHitListener(), this);
         manager.registerEvents(new EntityShootBowHandler(), this);
+        manager.registerEvents(new InteractEventHandler(), this);
     }
 
     // Add base item crafting recipes for custom items - we're going to need a better way to do this
@@ -75,10 +78,10 @@ public class TerraItems extends JavaPlugin {
         };
 
         for (EquipmentMaterialType material : materials) {
-            MeleeWeapon dagger = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.DAGGER));
-            MeleeWeapon mace = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.MACE));
-            MeleeWeapon staff = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.STAFF));
-            MeleeWeapon glaive = new MeleeWeapon(new WeaponConfiguration(material, WeaponType.GLAIVE));
+            MeleeWeapon dagger = new MeleeWeapon(new WeaponConfiguration(WeaponType.DAGGER));
+            MeleeWeapon mace = new MeleeWeapon(new WeaponConfiguration(WeaponType.MACE));
+            MeleeWeapon staff = new MeleeWeapon(new WeaponConfiguration(WeaponType.STAFF));
+            MeleeWeapon glaive = new MeleeWeapon(new WeaponConfiguration(WeaponType.GLAIVE));
 
             ShapedRecipe[] recipes = {
                     new ShapedRecipe(
@@ -102,6 +105,8 @@ public class TerraItems extends JavaPlugin {
                 Bukkit.addRecipe(recipe);
             }
         }
+
+        Bukkit.addRecipe(CopperBullet.RECIPE);
     }
 
     public WeaponsConfig getWeaponsConfig() {

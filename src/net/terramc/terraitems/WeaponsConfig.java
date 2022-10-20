@@ -5,6 +5,8 @@ import net.terramc.terraitems.weapons.*;
 import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import net.terramc.terraitems.weapons.configuration.WeaponMeta;
 import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
+import net.terramc.terraitems.weapons.melee.MeleeWeapon;
+import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,46 +32,32 @@ public class WeaponsConfig {
         plugin.getLogger().info("Loaded weapons.yml.");
     }
 
-    private void registerWeapon(String itemName, WeaponType weaponType) {
-        Logger logger = plugin.getLogger();
-
-        try {
-            ConfigurationSection metaSection = Objects.requireNonNull(config.getConfigurationSection(itemName + ".meta"));
-            WeaponMeta meta = new WeaponMeta(metaSection);
-
-            WeaponConfiguration configuration = new WeaponConfiguration(itemName, meta);
-
-            ConfigurationSection modifierSection = config.getConfigurationSection(itemName + ".modifiers");
-            if (modifierSection != null)
-                configuration.setWeaponModifiers(new WeaponModifiers(modifierSection));
-
-            switch (weaponType.damageType()) {
-                case MELEE:
-                    items.put(itemName, new MeleeWeapon(configuration));
-                    break;
-                case RANGED:
-                    items.put(itemName, new RangedWeapon(configuration));
-                    break;
-            }
-
-            Bukkit.getLogger().info("Loaded " + weaponType + " " + itemName);
-        } catch (IllegalArgumentException | IllegalStateException ex) {
-            logger.warning("Encountered exception when parsing weapon [" + itemName + "].");
-            logger.warning(ex.getMessage());
-            logger.warning(Arrays.toString(ex.getStackTrace()));
-        }
-    }
-
     private void readWeapons() {
         // Initialize hashmap of item key -> item as an ItemStack
         items = new HashMap<>();
+
+        Logger logger = plugin.getLogger();
         Set<String> sectionEntries = config.getKeys(false);
 
         for (String itemName : sectionEntries) {
-            String weaponTypeString = Objects.requireNonNull(config.getString(itemName + ".meta.type"));
-            WeaponType weaponType = WeaponType.valueOf(weaponTypeString.toUpperCase());
+            try {
+                ConfigurationSection itemSection = Objects.requireNonNull(config.getConfigurationSection(itemName));
 
-            registerWeapon(itemName, weaponType);
+                WeaponBuilder builder = new WeaponBuilder();
+                Weapon weapon = builder
+                        .setWeaponType(Objects.requireNonNull(itemSection.getString("type")))
+                        .setMaterialType(itemSection.getString("material"))
+                        .setMeta(itemSection.getConfigurationSection("meta"))
+                        .setModifiers(itemSection.getConfigurationSection("modifiers"))
+                        .build();
+
+                items.put(itemName, weapon);
+                Bukkit.getLogger().info("Loaded weapon " + itemName);
+            } catch (IllegalArgumentException | IllegalStateException ex) {
+                logger.warning("Encountered exception when parsing weapon [" + itemName + "].");
+                logger.warning(ex.getMessage());
+                logger.warning(Arrays.toString(ex.getStackTrace()));
+            }
         }
     }
 

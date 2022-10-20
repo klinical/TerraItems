@@ -2,11 +2,17 @@ package net.terramc.terraitems.commands;
 
 import net.terramc.terraitems.TerraItems;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -41,6 +47,19 @@ public class ItemSpawn implements CommandExecutor {
                             player.sendMessage("Invalid number of arguments (2 - 3).");
                         }
                         break;
+                    case "ammo":
+                        ItemStack bulletStack = new ItemStack(Material.FIREWORK_STAR);
+                        ItemMeta bulletMeta = bulletStack.getItemMeta();
+                        bulletMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&rCopper Bullet"));
+                        bulletMeta.setCustomModelData(1);
+                        PersistentDataContainer pdc = bulletMeta.getPersistentDataContainer();
+
+                        pdc.set(new NamespacedKey(TerraItems.lookupTerraPlugin(), "AMMUNITION"), PersistentDataType.STRING, "COPPER_BULLET");
+                        bulletStack.setItemMeta(bulletMeta);
+                        bulletStack.setAmount(64);
+
+                        player.getInventory().addItem(bulletStack);
+                        break;
                     case "list":
                         if (Objects.equals(args[1], "weapons")) {
                             Set<String> itemKeys = plugin.getWeaponsConfig().getItems().keySet();
@@ -51,6 +70,7 @@ public class ItemSpawn implements CommandExecutor {
 
                             player.sendMessage(Arrays.toString(itemKeys.toArray()));
                         }
+                        break;
 
                     case "add":
                     case "modify":

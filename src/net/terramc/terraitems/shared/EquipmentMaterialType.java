@@ -27,7 +27,7 @@ public enum EquipmentMaterialType {
                 return Material.valueOf(this.toString());
 
             case GUN:
-                return Material.CROSSBOW;
+                return Material.CARROT_ON_A_STICK;
 
             default:
             case IRON:

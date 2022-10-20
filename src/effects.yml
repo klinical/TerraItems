@@ -57,12 +57,6 @@ drain-1:
     # Chance of applying effect each time there is a trigger event
     chance: 25
 
-  meta:
-    ## EffectMeta
-    user-notification: "&dTarget's life-force is being drained away, healing you"
-    target-notification: "&cYour strength is fading.."
-    display: "Has a 25% chance\non hit to &ddrain the target's lifeforce&a\non over 10 seconds,\nrestoring half the amount drained as health."
-
 wither-2:
   application:
     ## EffectApplication

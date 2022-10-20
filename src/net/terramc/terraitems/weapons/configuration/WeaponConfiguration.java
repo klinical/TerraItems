@@ -9,15 +9,22 @@ public class WeaponConfiguration implements Serializable {
     private String name;
     private WeaponMeta meta;
     private WeaponModifiers modifiers;
+    private WeaponType weaponType;
+    private EquipmentMaterialType materialType;
 
-    public WeaponConfiguration(String name, WeaponMeta meta) {
-        this.name = name;
+    public WeaponConfiguration(WeaponType weaponType) {
+        this.weaponType = weaponType;
+        this.meta = new WeaponMeta(weaponType);
+        this.modifiers = new WeaponModifiers(weaponType);
+        this.materialType = weaponType.getDefaultMaterialType();
+    }
+
+    public void setMeta(WeaponMeta meta) {
         this.meta = meta;
     }
 
-    public WeaponConfiguration(EquipmentMaterialType material, WeaponType type) {
-        this.modifiers = new WeaponModifiers(material);
-        this.meta = new WeaponMeta(type);
+    public void setModifiers(WeaponModifiers modifiers) {
+        this.modifiers = modifiers;
     }
 
     public void setWeaponModifiers(WeaponModifiers modifiers) {
@@ -44,4 +51,26 @@ public class WeaponConfiguration implements Serializable {
         return modifiers != null;
     }
 
+    public WeaponType getWeaponType() {
+        return weaponType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setWeaponType(WeaponType weaponType) {
+        this.weaponType = weaponType;
+    }
+
+    public EquipmentMaterialType getMaterialType() {
+        if (materialType == null)
+            return weaponType.getDefaultMaterialType();
+
+        return materialType;
+    }
+
+    public void setMaterialType(EquipmentMaterialType materialType) {
+        this.materialType = materialType;
+    }
 }

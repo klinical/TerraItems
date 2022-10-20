@@ -12,34 +12,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class WeaponMeta {
-    @Nullable private final String title;
-    private final Rarity rarity;
-    private final List<String> customLore;
-    private final int customModel;
+    @Nullable private String title;
+    private Rarity rarity;
+    private List<String> customLore;
+    private int customModel;
     private final WeaponType weaponType;
-
-    public WeaponMeta(ConfigurationSection section) {
-        String weaponTypeString = Objects.requireNonNull(section.getString("type"));
-        this.weaponType = WeaponType.valueOf(weaponTypeString.toUpperCase());
-        this.title = section.getString("title");
-
-        String rarityString = section.getString("rarity");
-        if (rarityString != null)
-            rarity = Rarity.valueOf(rarityString.toUpperCase());
-        else
-            rarity = Rarity.COMMON;
-
-        customLore = section.getStringList("lore")
-                .stream()
-                .map(l -> ChatColor.translateAlternateColorCodes('&', l))
-                .collect(Collectors.toList());
-
-        int model = section.getInt("model");
-        if (model == 0)
-            customModel = weaponType.getDefaultModel();
-        else
-            customModel = model;
-    }
 
     public WeaponMeta(WeaponType type) {
         this.weaponType = type;
@@ -78,7 +55,22 @@ public class WeaponMeta {
         return customLore;
     }
 
-    public WeaponType getWeaponType() {
-        return weaponType;
+    public void setRarity(Rarity rarity) {
+        this.rarity = rarity;
+    }
+
+    public void setCustomLore(List<String> customLore) {
+        this.customLore = customLore;
+    }
+
+    public void setTitle(@Nullable String title) {
+        this.title = title;
+    }
+
+    public void setCustomModel(int customModel) {
+        if (customModel == 0)
+            this.customModel = weaponType.getDefaultModel();
+        else
+            this.customModel = customModel;
     }
 }
