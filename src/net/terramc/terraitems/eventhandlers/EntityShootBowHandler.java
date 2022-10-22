@@ -1,10 +1,10 @@
 package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.effects.TerraEffect;
+import net.terramc.terraitems.WeaponsConfig;
 import net.terramc.terraitems.shared.NamespaceKeys;
-import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.Weapon;
+import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,10 +13,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
-
-import java.util.List;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityShootBowHandler implements Listener {
+
+    public EntityShootBowHandler() {
+    }
 
     /**
      * Capture the bow shot event and attach Terra meta-data to arrow for ProjectileHitEvent to get effect data
@@ -34,14 +37,15 @@ public class EntityShootBowHandler implements Listener {
             return;
 
         PersistentDataContainer bowDataContainer = bowMeta.getPersistentDataContainer();
-        WeaponConfiguration weapon = bowDataContainer.get(
-                new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY),
-                TerraWeaponPersistentDataType.DATA_TYPE);
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
+        String weaponName = bowDataContainer.get(key, PersistentDataType.STRING);
 
-        if (weapon == null)
+        Weapon weapon = TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
+        if (!(weapon instanceof RangedWeapon))
             return;
 
-        if (!weapon.getModifiers().hasEffects())
+        RangedWeapon rangedWeapon = (RangedWeapon) weapon;
+        if (!rangedWeapon.hasWeaponEffects())
             return;
 
         event.getProjectile().setMetadata(NamespaceKeys.WEAPON_KEY, new FixedMetadataValue(

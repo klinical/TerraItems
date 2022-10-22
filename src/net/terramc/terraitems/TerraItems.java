@@ -9,9 +9,7 @@ import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
 import net.terramc.terraitems.recipe.CopperBullet;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
-import net.terramc.terraitems.shared.PotionEffectTypeDeserializer;
 import net.terramc.terraitems.weapons.melee.MeleeWeapon;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,7 +17,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -78,10 +75,10 @@ public class TerraItems extends JavaPlugin {
         };
 
         for (EquipmentMaterialType material : materials) {
-            MeleeWeapon dagger = new MeleeWeapon(new WeaponConfiguration(WeaponType.DAGGER));
-            MeleeWeapon mace = new MeleeWeapon(new WeaponConfiguration(WeaponType.MACE));
-            MeleeWeapon staff = new MeleeWeapon(new WeaponConfiguration(WeaponType.STAFF));
-            MeleeWeapon glaive = new MeleeWeapon(new WeaponConfiguration(WeaponType.GLAIVE));
+            MeleeWeapon dagger = new MeleeWeapon("DefaultDagger_" + material, WeaponType.DAGGER);
+            MeleeWeapon mace = new MeleeWeapon("DefaultDagger_" + material, WeaponType.MACE);
+            MeleeWeapon staff = new MeleeWeapon("DefaultDagger_" + material, WeaponType.STAFF);
+            MeleeWeapon glaive = new MeleeWeapon("DefaultDagger_" + material, WeaponType.GLAIVE);
 
             ShapedRecipe[] recipes = {
                     new ShapedRecipe(
@@ -123,7 +120,6 @@ public class TerraItems extends JavaPlugin {
 
     private static Gson buildGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(PotionEffectType.class, new PotionEffectTypeDeserializer());
         return gsonBuilder.create();
     }
 

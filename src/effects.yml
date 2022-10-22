@@ -7,7 +7,6 @@ bleed-1:
     every: 3
     # How does the effect work? single is one target, radius is multiple in radius, self is self
     target: single
-
   effect:
     ## Effect
     type: damage
@@ -15,16 +14,6 @@ bleed-1:
     level: 2
     # measured in seconds, defaults to 0
     duration: 10
-
-  trigger:
-    ## EffectTrigger
-    # type of item it is applied to (armor, weapon, trinket)
-    type: weapon
-    # What triggers the effect (on use, on hit, periodic)
-    trigger: hit
-    # Chance of applying effect each time there is a trigger event
-    chance: 5
-
   meta:
     ## EffectMeta
     user-notification: "&cTarget is afflicted with a small bleed."
@@ -39,7 +28,6 @@ drain-1:
     every: 1
     # How does the effect work? single is one target, radius is multiple in radius, self is self
     target: single
-
   effect:
     ## Effect
     type: drain
@@ -48,15 +36,6 @@ drain-1:
     # measured in seconds, defaults to 0
     duration: 10
 
-  trigger:
-    ## EffectTrigger
-    # type of item it is applied to (armor, weapon, trinket)
-    type: weapon
-    # What triggers the effect (on use, on hit, periodic)
-    trigger: hit
-    # Chance of applying effect each time there is a trigger event
-    chance: 25
-
 wither-2:
   application:
     ## EffectApplication
@@ -64,7 +43,6 @@ wither-2:
     type: once
     # How does the effect work? single is one target, radius is multiple in radius, self is self
     target: single
-
   effect:
     ## Effect
     type: potion
@@ -73,16 +51,6 @@ wither-2:
     level: 2
     # measured in seconds, defaults to 0
     duration: 10
-
-  trigger:
-    ## EffectTrigger
-    # type of item it is applied to (armor, weapon, trinket)
-    type: weapon
-    # What triggers the effect (on use, on hit, periodic)
-    trigger: hit
-    # Chance of applying effect each time there is a trigger event
-    chance: 95
-
   meta:
     ## EffectMeta
     user-notification: "&cTarget is afflicted with a potent wither effect."

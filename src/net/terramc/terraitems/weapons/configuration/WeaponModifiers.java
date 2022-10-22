@@ -14,24 +14,15 @@ public class WeaponModifiers {
     private List<String> effectLore = new ArrayList<>();
     private List<AttributeConfiguration> attributeConfigurations = new ArrayList<>();
     private List<String> enchantments = new ArrayList<>();
-    private Integer projectileDamage;
-    private Integer reloadSpeed;
+    private ProjectileModifiers projectileModifiers;
     private WeaponType weaponType;
 
-    public void setProjectileDamage(Integer projectileDamage) {
-        this.projectileDamage = projectileDamage;
+    public void setProjectileModifiers(ProjectileModifiers modifiers) {
+        this.projectileModifiers = modifiers;
     }
 
-    public void setReloadSpeed(Integer reloadSpeed) {
-        this.reloadSpeed = reloadSpeed;
-    }
-
-    public Integer getProjectileDamage() {
-        return projectileDamage;
-    }
-
-    public Integer getReloadSpeed() {
-        return reloadSpeed;
+    public ProjectileModifiers getProjectileModifiers() {
+        return projectileModifiers;
     }
 
     public WeaponModifiers(WeaponType weaponType) {

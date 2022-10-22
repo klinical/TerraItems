@@ -4,23 +4,45 @@ import com.google.common.collect.ArrayListMultimap;
 import net.terramc.terraitems.shared.Rarity;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.configuration.ProjectileModifiers;
+import net.terramc.terraitems.weapons.configuration.WeaponMeta;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RangedWeapon extends Weapon {
-    public RangedWeapon(WeaponConfiguration configuration) {
-        super(configuration);
+    private ProjectileModifiers projectileModifiers;
+
+    public RangedWeapon(String weaponName, WeaponType weaponType) {
+        super(weaponName, weaponType);
+
+        this.projectileModifiers = new ProjectileModifiers();
+        setDisplayName();
+    }
+
+    public void setProjectileModifiers(ProjectileModifiers modifiers) {
+        this.projectileModifiers = modifiers;
+        setDisplayName();
+    }
+
+    private void setDisplayName() {
+        ItemMeta meta = itemStack.getItemMeta();
+        String displayName = "&r" + weaponType.getDefaultMaterialType().getPrefix() + ' ' + weaponType.getDisplayName();
+
+        if (meta == null)
+            throw new IllegalStateException("Meta null when setting display name");
+
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
     }
 
     @Override
     public List<String> getWeaponInfoLore() {
-        WeaponType weaponType = configuration.getWeaponType();
-        Rarity rarity = configuration.getMeta().getRarity();
+        Rarity rarity = weaponMeta.getRarity();
 
         String loreLine = ChatColor.translateAlternateColorCodes(
                 '&',
@@ -31,22 +53,17 @@ public class RangedWeapon extends Weapon {
         List<String> loreList = new ArrayList<>();
         loreList.add(loreLine);
         loreList.add(ChatColor.translateAlternateColorCodes(
-                '&', "&9" + (double) configuration.getModifiers().getReloadSpeed() / 20L + "s Reload Speed"
+                '&', "&9" + (double) projectileModifiers.getReloadSpeed() / 20L + "s Reload Speed"
         ));
         loreList.add(ChatColor.translateAlternateColorCodes(
-                '&', "&9" + configuration.getModifiers().getProjectileDamage() + " Projectile Damage"
+                '&', "&9" + projectileModifiers.getProjectileDamage() + " Projectile Damage"
         ));
 
         return loreList;
     }
 
-    @Override
-    protected String getDefaultDisplayName() {
-        WeaponType weaponType = configuration.getWeaponType();
-
-        String displayName = "&r" + weaponType.getDefaultMaterialType().getPrefix() + ' ' + weaponType.getDisplayName();
-
-        return ChatColor.translateAlternateColorCodes('&', displayName);
+    public ProjectileModifiers getProjectileModifiers() {
+        return projectileModifiers;
     }
 
     @Override

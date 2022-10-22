@@ -19,13 +19,19 @@ kitchen-knife:
 
 heavy-blunderbuss:
   type: gun
-  modifiers:
+  projectile:
     reload-speed: 35
-    projectile-damage: 9
-    effects:
-      - bleed-1
+    damage: 9
+    # is a multiplication modifier of a normalized/2 velocity vector of the projectile
+    knockback: 2
+  effects:
+    bleed-1:
+      # What triggers the effect (melee-hit, projectile-hit, periodic)
+      trigger: projectile_hit
+      # Chance of applying effect each time there is a trigger event
+      chance: 5
   meta:
-    title: "Kitchen Knife"
+    title: "Heavy Blunderbuss"
     rarity: uncommon
     lore:
-      - "&dStandard issue kitchen-ware."
+      - "&dIt do be shootin'."

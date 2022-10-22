@@ -45,10 +45,8 @@ public class EffectsConfig {
                 Effect effect = new Effect(
                         config.getConfigurationSection(effectTitle + ".effect"));
 
-                EffectTrigger effectTrigger = new EffectTrigger(
-                        config.getConfigurationSection(effectTitle + ".trigger"));
 
-                TerraEffect terraEffect = new TerraEffect(effectApplication, effect, effectTrigger, effectTitle);
+                TerraEffect terraEffect = new TerraEffect(effectApplication, effect, effectTitle);
 
                 ConfigurationSection metaSection = config.getConfigurationSection(effectTitle + ".meta");
                 if (metaSection != null) {

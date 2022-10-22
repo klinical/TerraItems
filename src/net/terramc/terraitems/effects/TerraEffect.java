@@ -10,14 +10,12 @@ import java.io.Serializable;
 public class TerraEffect implements Serializable {
     private final EffectApplication application;
     private final Effect effect;
-    private final EffectTrigger trigger;
     private EffectMeta meta;
     private final String effectName;
 
-    public TerraEffect(EffectApplication application, Effect effect, EffectTrigger trigger, String effectName) {
+    public TerraEffect(EffectApplication application, Effect effect, String effectName) {
         this.application = application;
         this.effect = effect;
-        this.trigger = trigger;
         this.effectName = effectName;
     }
 
@@ -31,10 +29,6 @@ public class TerraEffect implements Serializable {
 
     public Effect getEffect() {
         return effect;
-    }
-
-    public EffectTrigger getTrigger() {
-        return trigger;
     }
 
     public EffectMeta getMeta() {

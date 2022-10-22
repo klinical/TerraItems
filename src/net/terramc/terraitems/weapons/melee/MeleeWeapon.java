@@ -5,38 +5,45 @@ import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
-import net.terramc.terraitems.weapons.configuration.WeaponMeta;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class MeleeWeapon extends Weapon {
+    @NotNull private final EquipmentMaterialType materialType;
 
-    public MeleeWeapon(WeaponConfiguration configuration) {
-        super(configuration);
+    public MeleeWeapon(String weaponName, WeaponType weaponType) {
+        super(weaponName, weaponType);
 
-        Objects.requireNonNull(configuration.getModifiers());
-        Objects.requireNonNull(configuration.getMaterialType());
+        this.materialType = weaponType.getDefaultMaterialType();
+        setDisplayName();
     }
 
-    protected String getDefaultDisplayName() {
-        EquipmentMaterialType material = Objects.requireNonNull(configuration.getMaterialType());
-        WeaponType weaponType = configuration.getWeaponType();
-        String displayName = "&r" + material.getPrefix() + ' ' + weaponType.getDisplayName();
+    public MeleeWeapon(String weaponName, WeaponType weaponType, @NotNull EquipmentMaterialType materialType) {
+        super(weaponName, weaponType, materialType);
 
-        return ChatColor.translateAlternateColorCodes('&', displayName);
+        this.materialType = materialType;
+        setDisplayName();
+    }
+
+    private void setDisplayName() {
+        ItemMeta meta = itemStack.getItemMeta();
+        String displayName = "&r" + materialType.getPrefix() + ' ' + weaponType.getDisplayName();
+
+        if (meta == null)
+            throw new IllegalStateException("Meta null when setting display name");
+
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
     }
 
     public List<String> getWeaponInfoLore() {
-        WeaponMeta weaponMeta = configuration.getMeta();
-        EquipmentMaterialType materialType = Objects.requireNonNull(configuration.getMaterialType());
-
         Rarity rarity = weaponMeta.getRarity();
 
         String loreLine = ChatColor.translateAlternateColorCodes(
@@ -45,7 +52,7 @@ public class MeleeWeapon extends Weapon {
                         rarity.getDisplayName() +
                         "&r &8" +
                         materialType.getPrefix() +
-                        " " + configuration.getWeaponType().getDisplayName());
+                        " " + weaponType.getDisplayName());
 
         List<String> list = new ArrayList<>();
         list.add(loreLine);
@@ -57,22 +64,18 @@ public class MeleeWeapon extends Weapon {
         ArrayListMultimap<Attribute, AttributeModifier> map = ArrayListMultimap.create();
         ItemMeta meta = Objects.requireNonNull(this.itemStack.getItemMeta());
 
-        WeaponType weaponType = configuration.getWeaponType();
-        EquipmentMaterialType materialType = Objects.requireNonNull(configuration.getMaterialType());
-
         AttributeModifier damageModifier =  new AttributeModifier(
                 UUID.randomUUID(),
                 meta.getDisplayName() + "-" + Attribute.GENERIC_ATTACK_DAMAGE,
-                weaponType.getAttributeDamage(materialType),
+                weaponType.getAttributeDamage(weaponType.getDefaultMaterialType()),
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
         );
         map.put(Attribute.GENERIC_ATTACK_DAMAGE, damageModifier);
 
-
         AttributeModifier speedModifier =  new AttributeModifier(
                 UUID.randomUUID(),
                 meta.getDisplayName() + "-" + Attribute.GENERIC_ATTACK_SPEED,
-                weaponType.getAttributeSpeed(materialType),
+                weaponType.getAttributeSpeed(weaponType.getDefaultMaterialType()),
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
         );
         map.put(Attribute.GENERIC_ATTACK_SPEED, speedModifier);
@@ -80,7 +83,7 @@ public class MeleeWeapon extends Weapon {
         return map;
     }
 
-    public ItemStack getItemStack() {
+    public @NotNull ItemStack getItemStack() {
         return itemStack;
     }
 }

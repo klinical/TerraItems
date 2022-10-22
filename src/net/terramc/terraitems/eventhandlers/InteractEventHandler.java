@@ -2,9 +2,10 @@ package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.shared.NamespaceKeys;
-import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
+import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
+import net.terramc.terraitems.weapons.ranged.RangedWeapon;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
@@ -25,6 +26,9 @@ import java.util.HashMap;
 
 public class InteractEventHandler implements Listener {
 
+    public InteractEventHandler() {
+    }
+
     private static final HashMap<String, Boolean> reloadCounter = new HashMap<>();
 
     public void handleGunShotEvent(Player player) {
@@ -35,12 +39,14 @@ public class InteractEventHandler implements Listener {
 
         PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
-        WeaponConfiguration weaponCfg = pdc.get(key, TerraWeaponPersistentDataType.DATA_TYPE);
+        String weaponName = pdc.get(key, PersistentDataType.STRING);
+        Weapon weapon = TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
 
-        if (weaponCfg == null)
+        if (weapon == null)
             return;
 
-        if (weaponCfg.getWeaponType() == WeaponType.GUN) {
+        if (weapon instanceof RangedWeapon && weapon.getWeaponType() == WeaponType.GUN) {
+            RangedWeapon rangedWeapon = (RangedWeapon) weapon;
             reloadCounter.putIfAbsent(player.getName(), false);
 
             Location playerLoc = player.getLocation();
@@ -49,7 +55,9 @@ public class InteractEventHandler implements Listener {
 
             boolean isReloading = reloadCounter.get(player.getName());
             if (isReloading || ammo == null) {
-                player.getWorld().playSound(playerLoc, "gun:terra.sound.empty", 1.0f, 1.0f);
+                if (ammo == null)
+                    player.getWorld().playSound(playerLoc, "gun:terra.sound.empty", 1.0f, 1.0f);
+
                 return;
             }
 
@@ -57,23 +65,21 @@ public class InteractEventHandler implements Listener {
             scheduler.scheduleSyncDelayedTask(TerraItems.lookupTerraPlugin(), () -> {
                 reloadCounter.put(player.getName(), false);
                 player.getWorld().playSound(player.getLocation(), "gun:terra.sound.reload", 1.0f, 1.0f);
-            }, weaponCfg.getModifiers().getReloadSpeed());
+            }, rangedWeapon.getProjectileModifiers().getReloadSpeed());
 
             reloadCounter.put(player.getName(), true);
             Entity bullet = player.launchProjectile(
                     Snowball.class,
-                    player.getLocation().add(
-                            0,
-                            1.62,
-                            0
-                    ).toVector()
+                    player.getLocation().getDirection().multiply(4)
             );
 
-            ammo.setAmount(ammo.getAmount() - 1);
-            bullet.setVelocity(playerLoc.getDirection().multiply(8));
+            if (player.getGameMode() != GameMode.CREATIVE)
+                ammo.setAmount(ammo.getAmount() - 1);
+
+            bullet.setPersistent(false);
             bullet.setMetadata(NamespaceKeys.WEAPON_KEY, new FixedMetadataValue(
                     TerraItems.lookupTerraPlugin(),
-                    weaponCfg
+                    weapon.getWeaponName()
             ));
 
             player.getWorld().playSound(playerLoc, "gun:terra.sound.gunshot", 1.0f, 1.0f);

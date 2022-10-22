@@ -1,14 +1,15 @@
 package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.effects.manager.EffectManager;
+import net.terramc.terraitems.WeaponsConfig;
 import net.terramc.terraitems.effects.TerraEffect;
+import net.terramc.terraitems.effects.configuration.EffectTrigger;
+import net.terramc.terraitems.effects.manager.EffectManager;
 import net.terramc.terraitems.shared.NamespaceKeys;
-import net.terramc.terraitems.shared.TerraWeaponPersistentDataType;
+import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
-import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
-import org.bukkit.Bukkit;
+import net.terramc.terraitems.weapons.configuration.ProjectileModifiers;
+import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -20,13 +21,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 public class OnHitListener implements Listener {
 
-    public OnHitListener() { }
+    public OnHitListener() {
+    }
 
     private void handleLivingEntityMeleeHit(LivingEntity attacker, LivingEntity defender) {
         EntityEquipment userEquipment = attacker.getEquipment();
@@ -40,13 +44,14 @@ public class OnHitListener implements Listener {
 
         PersistentDataContainer container = weaponMeta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
-        WeaponConfiguration weaponConfiguration = container.get(key, TerraWeaponPersistentDataType.DATA_TYPE);
+        String weaponName = container.get(key, PersistentDataType.STRING);
+        Weapon weapon = TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
 
-        if (weaponConfiguration == null)
+        if (weapon == null)
             return;
 
-        List<TerraEffect> effects = weaponConfiguration.getModifiers().getEffects();
-        rollForEffects(effects, attacker, defender);
+        if (weapon.hasWeaponEffects())
+            rollForEffects(weapon.getWeaponEffects(), attacker, defender);
     }
 
     private void handleLivingEntityRangedEvent(Projectile projectile, LivingEntity defender) {
@@ -63,20 +68,32 @@ public class OnHitListener implements Listener {
                 return;
 
             FixedMetadataValue fixedMetadataValue = (FixedMetadataValue) value;
-            if (!(fixedMetadataValue.value() instanceof WeaponConfiguration))
+            if (!(fixedMetadataValue.value() instanceof String))
                 return;
 
-            WeaponConfiguration cfg = (WeaponConfiguration) fixedMetadataValue.value();
-            if (cfg == null)
+            String weaponName = (String) fixedMetadataValue.value();
+            if (weaponName == null)
                 return;
 
-            WeaponModifiers modifiers = cfg.getModifiers();
-            if (modifiers == null)
+            if (!(TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName) instanceof RangedWeapon))
                 return;
 
-            rollForEffects(cfg.getModifiers().getEffects(), shooter, defender);
-            if (cfg.getWeaponType() == WeaponType.GUN && projectile instanceof Snowball)
+            RangedWeapon weapon = (RangedWeapon) TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
+            if (weapon == null)
+                return;
+
+            if (weapon.hasWeaponEffects())
+                rollForEffects(weapon.getWeaponEffects(), shooter, defender);
+
+            if (weapon.getWeaponType() == WeaponType.GUN && projectile instanceof Snowball) {
+                ProjectileModifiers modifiers = weapon.getProjectileModifiers();
                 defender.damage(modifiers.getProjectileDamage());
+                defender.setVelocity(
+                        projectile.getVelocity()
+                                .normalize()
+                                .multiply(modifiers.getProjectileKnockback())
+                );
+            }
         }
     }
 
@@ -84,7 +101,6 @@ public class OnHitListener implements Listener {
     public void onEntityHit(EntityDamageByEntityEvent event) {
         Entity defender = event.getEntity();
         Entity attacker = event.getDamager();
-        Bukkit.getLogger().warning("what the...");
 
         if (attacker instanceof LivingEntity && defender instanceof LivingEntity) {
             handleLivingEntityMeleeHit((LivingEntity) attacker, (LivingEntity) defender);
@@ -93,9 +109,10 @@ public class OnHitListener implements Listener {
         }
     }
 
-    private void rollForEffects(List<TerraEffect> effects, LivingEntity attacker, LivingEntity defender) {
-        for (TerraEffect effect : effects) {
-            if (successfulProcRoll(effect.getTrigger().getChance())) {
+    private void rollForEffects(HashMap<String, EffectTrigger> effects, LivingEntity attacker, LivingEntity defender) {
+        for (String effectString : effects.keySet()) {
+            if (successfulProcRoll(effects.get(effectString).getChance())) {
+                TerraEffect effect = TerraItems.lookupTerraPlugin().getEffectsConfig().getItems().get(effectString);
                 EffectManager.sendMetaNotificationMessages(attacker, defender, effect.getMeta());
                 EffectManager.applyEffect(attacker, defender, effect);
             }

@@ -2,11 +2,6 @@ package net.terramc.terraitems;
 
 import net.terramc.terraitems.shared.ConfigUtility;
 import net.terramc.terraitems.weapons.*;
-import net.terramc.terraitems.weapons.configuration.WeaponConfiguration;
-import net.terramc.terraitems.weapons.configuration.WeaponMeta;
-import net.terramc.terraitems.weapons.configuration.WeaponModifiers;
-import net.terramc.terraitems.weapons.melee.MeleeWeapon;
-import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,10 +40,13 @@ public class WeaponsConfig {
 
                 WeaponBuilder builder = new WeaponBuilder();
                 Weapon weapon = builder
+                        .setName(itemName)
                         .setWeaponType(Objects.requireNonNull(itemSection.getString("type")))
                         .setMaterialType(itemSection.getString("material"))
                         .setMeta(itemSection.getConfigurationSection("meta"))
                         .setModifiers(itemSection.getConfigurationSection("modifiers"))
+                        .setEffects(itemSection.getConfigurationSection("effects"))
+                        .setProjectileModifiers(itemSection.getConfigurationSection("projectile"))
                         .build();
 
                 items.put(itemName, weapon);
