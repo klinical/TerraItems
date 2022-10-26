@@ -1,7 +1,8 @@
-package net.terramc.terraitems.weapons.ranged;
+package net.terramc.terraitems.weapons.magic;
 
 import com.google.common.collect.ArrayListMultimap;
 import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.ChatColor;
@@ -10,23 +11,25 @@ import org.bukkit.attribute.AttributeModifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class RangedWeapon extends Weapon {
-    private ProjectileModifiers projectileModifiers;
+public class MagicWeapon extends Weapon {
+    private final Spell spell;
 
-    public RangedWeapon(String weaponName, WeaponType weaponType) {
-        super(weaponName, weaponType);
+    public MagicWeapon(String name, WeaponType weaponType, Spell spell) {
+        super(name, weaponType);
 
-        this.projectileModifiers = new ProjectileModifiers();
+        this.spell = spell;
     }
 
-    public void setProjectileModifiers(ProjectileModifiers modifiers) {
-        this.projectileModifiers = modifiers;
+    public Spell getSpell() {
+        return spell;
     }
 
     @Override
     public List<String> getWeaponInfoLore() {
         Rarity rarity = weaponMeta.getRarity();
+        List<String> loreList = new ArrayList<>();
 
         String loreLine = ChatColor.translateAlternateColorCodes(
                 '&',
@@ -34,20 +37,14 @@ public abstract class RangedWeapon extends Weapon {
                         rarity.getDisplayName() +
                         "&r &8" + weaponType.getDisplayName());
 
-        List<String> loreList = new ArrayList<>();
         loreList.add(loreLine);
-        loreList.add(ChatColor.translateAlternateColorCodes(
-                '&', "&9" + (double) projectileModifiers.getReloadSpeed() / 20L + "s Reload Speed"
-        ));
-        loreList.add(ChatColor.translateAlternateColorCodes(
-                '&', "&9" + projectileModifiers.getProjectileDamage() + " Projectile Damage"
-        ));
+        loreList.addAll(spell.getItemDescription()
+                .stream()
+                .map((s -> ChatColor.LIGHT_PURPLE + s))
+                .collect(Collectors.toList()));
+        loreList.add(ChatColor.DARK_AQUA + "Mana cost: " + ChatColor.AQUA + spell.getManaCost());
 
         return loreList;
-    }
-
-    public ProjectileModifiers getProjectileModifiers() {
-        return projectileModifiers;
     }
 
     @Override

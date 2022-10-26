@@ -42,7 +42,6 @@ public class WeaponsConfig {
                 Weapon weapon = builder
                         .setName(itemName)
                         .setWeaponType(Objects.requireNonNull(itemSection.getString("type")))
-                        .setMaterialType(itemSection.getString("material"))
                         .setMeta(itemSection.getConfigurationSection("meta"))
                         .setModifiers(itemSection.getConfigurationSection("modifiers"))
                         .setEffects(itemSection.getConfigurationSection("effects"))

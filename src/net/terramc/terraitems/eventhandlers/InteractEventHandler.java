@@ -6,9 +6,8 @@ import net.terramc.terraitems.TerraPlayer;
 import net.terramc.terraitems.shared.NamespaceKeys;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.Weapon;
-import net.terramc.terraitems.weapons.WeaponType;
+import net.terramc.terraitems.weapons.magic.MagicWeapon;
 import net.terramc.terraitems.weapons.ranged.RangedWeapon;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -35,8 +34,7 @@ public class InteractEventHandler implements Listener {
 
     private static final HashMap<String, Boolean> reloadCounter = new HashMap<>();
 
-    public void handleGunShotEvent(Player player, Weapon weapon) {
-        RangedWeapon rangedWeapon = (RangedWeapon) weapon;
+    public void handleGunShotEvent(Player player, RangedWeapon weapon) {
         reloadCounter.putIfAbsent(player.getName(), false);
 
         Location playerLoc = player.getLocation();
@@ -55,7 +53,7 @@ public class InteractEventHandler implements Listener {
         scheduler.scheduleSyncDelayedTask(TerraItems.lookupTerraPlugin(), () -> {
             reloadCounter.put(player.getName(), false);
             player.getWorld().playSound(player.getLocation(), "gun:terra.sound.reload", 1.0f, 1.0f);
-        }, rangedWeapon.getProjectileModifiers().getReloadSpeed());
+        }, weapon.getProjectileModifiers().getReloadSpeed());
 
         reloadCounter.put(player.getName(), true);
         Entity bullet = player.launchProjectile(
@@ -113,7 +111,7 @@ public class InteractEventHandler implements Listener {
                 .get(weaponName);
     }
 
-    private void handleSpellCast(Player player, Weapon weapon) {
+    private void handleSpellCast(Player player, MagicWeapon weapon) {
         TerraPlayer terraPlayer = PlayerManager
                 .getPlayerMap()
                 .putIfAbsent(player.getName(), new TerraPlayer(player));
@@ -156,12 +154,13 @@ public class InteractEventHandler implements Listener {
                 return;
 
             case STAFF:
+            case WAND:
             case SPELL_BOOK:
-                handleSpellCast(player, weapon);
+                handleSpellCast(player, (MagicWeapon) weapon);
                 break;
 
             case GUN:
-                handleGunShotEvent(player, weapon);
+                handleGunShotEvent(player, (RangedWeapon) weapon);
                 break;
         }
     }

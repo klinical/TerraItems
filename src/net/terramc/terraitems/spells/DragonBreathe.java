@@ -2,10 +2,7 @@ package net.terramc.terraitems.spells;
 
 import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.TerraPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -81,5 +78,14 @@ public class DragonBreathe extends Spell {
     @Override
     public double getManaCost() {
         return manaCost;
+    }
+
+    @Override
+    public List<String> getItemDescription() {
+        List<String> description = new ArrayList<>();
+        description.add("Casts a wave of shadow towards the target, ");
+        description.add("dealing moderate damage as it moves forward.");
+
+        return description;
     }
 }

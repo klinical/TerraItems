@@ -1,8 +1,7 @@
 package net.terramc.terraitems.weapons;
 
-import net.terramc.terraitems.shared.EquipmentMaterialType;
-
-import java.util.HashMap;
+import net.terramc.terraitems.weapons.melee.Sword;
+import org.bukkit.Material;
 
 public enum WeaponType {
     SWORD,
@@ -14,77 +13,8 @@ public enum WeaponType {
     BOW,
     CROSSBOW,
     SPELL_BOOK,
+    WAND,
     GUN;
-
-    /**
-     * TODO: these default values being stored in a flat file such as JSON would probably be cleaner and easier
-     * to maintain
-     */
-    private static final HashMap<EquipmentMaterialType, HashMap<WeaponType, Integer>> damageMap;
-    static {
-        damageMap = new HashMap<>();
-        HashMap<WeaponType, Integer> ironValues = new HashMap<>();
-        damageMap.put(EquipmentMaterialType.IRON, ironValues);
-        ironValues.put(WeaponType.DAGGER, 5);
-        ironValues.put(WeaponType.SWORD, 6);
-        ironValues.put(WeaponType.AXE, 9);
-        ironValues.put(WeaponType.MACE, 9);
-        ironValues.put(WeaponType.STAFF, 6);
-        ironValues.put(WeaponType.GLAIVE, 9);
-        HashMap<WeaponType, Integer> diamondValues = new HashMap<>();
-        damageMap.put(EquipmentMaterialType.DIAMOND, diamondValues);
-        diamondValues.put(WeaponType.DAGGER, 6);
-        diamondValues.put(WeaponType.SWORD, 7);
-        diamondValues.put(WeaponType.AXE, 9);
-        diamondValues.put(WeaponType.MACE, 9);
-        diamondValues.put(WeaponType.STAFF, 7);
-        diamondValues.put(WeaponType.GLAIVE, 9);
-        HashMap<WeaponType, Integer> netheriteValues = new HashMap<>();
-        damageMap.put(EquipmentMaterialType.NETHERITE, netheriteValues);
-        netheriteValues.put(WeaponType.DAGGER, 7);
-        netheriteValues.put(WeaponType.SWORD, 8);
-        netheriteValues.put(WeaponType.AXE, 10);
-        netheriteValues.put(WeaponType.MACE, 10);
-        netheriteValues.put(WeaponType.STAFF, 8);
-        netheriteValues.put(WeaponType.GLAIVE, 10);
-    }
-
-    private static final HashMap<EquipmentMaterialType, HashMap<WeaponType, Double>> speedMap;
-    static {
-        speedMap = new HashMap<>();
-        HashMap<WeaponType, Double> ironValues = new HashMap<>();
-        speedMap.put(EquipmentMaterialType.IRON, ironValues);
-        ironValues.put(WeaponType.DAGGER, 1.9);
-        ironValues.put(WeaponType.SWORD, 1.6);
-        ironValues.put(WeaponType.AXE, 0.9);
-        ironValues.put(WeaponType.MACE, 0.9);
-        ironValues.put(WeaponType.STAFF, 0.9);
-        ironValues.put(WeaponType.GLAIVE, 0.9);
-        HashMap<WeaponType, Double> diamondValues = new HashMap<>();
-        speedMap.put(EquipmentMaterialType.DIAMOND, diamondValues);
-        diamondValues.put(WeaponType.DAGGER, 1.9);
-        diamondValues.put(WeaponType.SWORD, 1.6);
-        diamondValues.put(WeaponType.AXE, 0.9);
-        diamondValues.put(WeaponType.MACE, 0.9);
-        diamondValues.put(WeaponType.STAFF, 0.9);
-        diamondValues.put(WeaponType.GLAIVE, 0.9);
-        HashMap<WeaponType, Double> netheriteValues = new HashMap<>();
-        speedMap.put(EquipmentMaterialType.NETHERITE, netheriteValues);
-        netheriteValues.put(WeaponType.DAGGER, 1.9);
-        netheriteValues.put(WeaponType.SWORD, 1.6);
-        netheriteValues.put(WeaponType.AXE, 1.0);
-        netheriteValues.put(WeaponType.MACE, 1.0);
-        netheriteValues.put(WeaponType.STAFF, 1.0);
-        netheriteValues.put(WeaponType.GLAIVE, 1.0);
-    }
-
-    public Integer getAttributeDamage(EquipmentMaterialType mat) {
-        return damageMap.get(mat).get(this);
-    }
-
-    public Double getAttributeSpeed(EquipmentMaterialType mat) {
-        return speedMap.get(mat).get(this);
-    }
 
     public String getDisplayName() {
         switch (this) {
@@ -102,19 +32,22 @@ public enum WeaponType {
         }
     }
 
-    public String getVanillaItemName() {
+    public Material getVanillaItem() {
         switch (this) {
             default:
-            case SWORD:
-            case DAGGER: return "SWORD";
-            case AXE:
-            case MACE: return "AXE";
-            case STAFF: return "SHOVEL";
-            case GLAIVE: return "HOE";
-            case BOW: return "BOW";
-            case GUN:
-            case CROSSBOW: return "CROSSBOW";
-            case SPELL_BOOK: return "BOOK";
+            case SWORD: return Material.GOLDEN_SWORD;
+            case DAGGER: return Material.BLAZE_ROD;
+            case AXE: return Material.GOLDEN_AXE;
+            case MACE: return Material.BONE;
+            case GLAIVE: return Material.STICK;
+
+            case BOW: return Material.BOW;
+            case GUN: return Material.CARROT_ON_A_STICK;
+            case CROSSBOW: return Material.CROSSBOW;
+
+            case SPELL_BOOK: return Material.BOOK;
+            case WAND: return Material.LIGHTNING_ROD;
+            case STAFF: return Material.WARPED_FUNGUS_ON_A_STICK;
         }
     }
 
@@ -124,37 +57,19 @@ public enum WeaponType {
             case DAGGER:
             case AXE:
             case MACE:
-            case STAFF:
             case GLAIVE:
             default:
                 return WeaponDamageType.MELEE;
+
             case BOW:
             case GUN:
-            case SPELL_BOOK:
             case CROSSBOW:
                 return WeaponDamageType.RANGED;
-        }
-    }
 
-    public EquipmentMaterialType getDefaultMaterialType() {
-        switch (this) {
-            case SWORD:
-            case DAGGER:
-            case AXE:
-            case MACE:
-            case STAFF:
-            case GLAIVE:
-            default:
-                return EquipmentMaterialType.IRON;
-
-            case BOW:
-                return EquipmentMaterialType.BOW;
-            case CROSSBOW:
-                return EquipmentMaterialType.CROSSBOW;
-            case GUN:
-                return EquipmentMaterialType.GUN;
             case SPELL_BOOK:
-                return EquipmentMaterialType.SPELL_BOOK;
+            case STAFF:
+            case WAND:
+                return WeaponDamageType.MAGIC;
         }
     }
 
@@ -169,6 +84,7 @@ public enum WeaponType {
 
             case DAGGER:
             case SPELL_BOOK:
+            case WAND:
             case MACE:
             case STAFF:
             case GLAIVE:

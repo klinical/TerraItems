@@ -8,13 +8,7 @@ import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
 import net.terramc.terraitems.ammunition.CopperBullet;
-import net.terramc.terraitems.shared.EquipmentMaterialType;
-import net.terramc.terraitems.weapons.melee.MeleeWeapon;
-import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -70,38 +64,38 @@ public class TerraItems extends JavaPlugin {
 
     // Add base item crafting recipes for custom items - we're going to need a better way to do this
     private void initCraftingRecipes() {
-        EquipmentMaterialType[] materials = {
-                EquipmentMaterialType.IRON, EquipmentMaterialType.DIAMOND, EquipmentMaterialType.NETHERITE
-        };
-
-        for (EquipmentMaterialType material : materials) {
-            MeleeWeapon dagger = new MeleeWeapon("DefaultDagger_" + material, WeaponType.DAGGER);
-            MeleeWeapon mace = new MeleeWeapon("DefaultDagger_" + material, WeaponType.MACE);
-            MeleeWeapon staff = new MeleeWeapon("DefaultDagger_" + material, WeaponType.STAFF);
-            MeleeWeapon glaive = new MeleeWeapon("DefaultDagger_" + material, WeaponType.GLAIVE);
-
-            ShapedRecipe[] recipes = {
-                    new ShapedRecipe(
-                            new NamespacedKey(this, material + "dagger"), dagger.getItemStack()),
-                    new ShapedRecipe(
-                            new NamespacedKey(this, material + "mace"), mace.getItemStack()),
-                    new ShapedRecipe(
-                            new NamespacedKey(this, material + "staff"), staff.getItemStack()),
-                    new ShapedRecipe(
-                            new NamespacedKey(this, material + "glaive"), glaive.getItemStack()),
-            };
-
-            recipes[0].shape("   ", " X ", " I ");
-            recipes[1].shape("XIX", " I ", " I ");
-            recipes[2].shape("IXI", " I ", " I ");
-            recipes[3].shape("  X", " I ", "I  ");
-
-            for (ShapedRecipe recipe : recipes) {
-                recipe.setIngredient('X', material.getIngot());
-                recipe.setIngredient('I', Material.STICK);
-                Bukkit.addRecipe(recipe);
-            }
-        }
+//        EquipmentMaterialType[] materials = {
+//                EquipmentMaterialType.IRON, EquipmentMaterialType.DIAMOND, EquipmentMaterialType.NETHERITE
+//        };
+//
+//        for (EquipmentMaterialType material : materials) {
+//            MeleeWeapon dagger = new MeleeWeapon("DefaultDagger_" + material, WeaponType.DAGGER);
+//            MeleeWeapon mace = new MeleeWeapon("DefaultDagger_" + material, WeaponType.MACE);
+//            MeleeWeapon staff = new MeleeWeapon("DefaultDagger_" + material, WeaponType.STAFF);
+//            MeleeWeapon glaive = new MeleeWeapon("DefaultDagger_" + material, WeaponType.GLAIVE);
+//
+//            ShapedRecipe[] recipes = {
+//                    new ShapedRecipe(
+//                            new NamespacedKey(this, material + "dagger"), dagger.getItemStack()),
+//                    new ShapedRecipe(
+//                            new NamespacedKey(this, material + "mace"), mace.getItemStack()),
+//                    new ShapedRecipe(
+//                            new NamespacedKey(this, material + "staff"), staff.getItemStack()),
+//                    new ShapedRecipe(
+//                            new NamespacedKey(this, material + "glaive"), glaive.getItemStack()),
+//            };
+//
+//            recipes[0].shape("   ", " X ", " I ");
+//            recipes[1].shape("XIX", " I ", " I ");
+//            recipes[2].shape("IXI", " I ", " I ");
+//            recipes[3].shape("  X", " I ", "I  ");
+//
+//            for (ShapedRecipe recipe : recipes) {
+//                recipe.setIngredient('X', material.getIngot());
+//                recipe.setIngredient('I', Material.STICK);
+//                Bukkit.addRecipe(recipe);
+//            }
+//        }
 
         Bukkit.addRecipe(CopperBullet.RECIPE);
     }

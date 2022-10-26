@@ -1,12 +1,10 @@
 kitchen-knife:
   type: dagger
-  # material not required/used for ranged, only melee
-  material: iron
   modifiers:
     #attributes:
-      #value: 5
-      #slots:
-        # - etc
+    #value: 5
+    #slots:
+    # - etc
     effects:
       - bleed-1
     enchantments:
@@ -16,6 +14,34 @@ kitchen-knife:
     rarity: uncommon
     lore:
       - "&dStandard issue kitchen-ware."
+
+muramasa:
+  type: sword
+  meta:
+    title: "Muramasa"
+    rarity: epic
+    model: 2
+
+glow-sword:
+  type: sword
+  meta:
+    title: "Glow Sword"
+    rarity: rare
+    model: 3
+
+fire-sword:
+  type: sword
+  meta:
+    title: "Fire Sword"
+    rarity: epic
+    model: 5
+
+ice-sword:
+  type: sword
+  meta:
+    title: "Ice Sword"
+    rarity: epic
+    model: 4
 
 heavy-blunderbuss:
   type: gun

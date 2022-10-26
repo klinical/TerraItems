@@ -3,13 +3,10 @@ package net.terramc.terraitems.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.effects.EffectTriggerType;
-import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.*;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -37,23 +34,9 @@ public abstract class Weapon {
     @Nonnull protected WeaponMeta weaponMeta;
     @Nullable protected HashMap<String, EffectTrigger> weaponEffects;
     @Nullable protected WeaponModifiers weaponModifiers;
-    private Spell spell;
 
     public Weapon(@NotNull String weaponName, WeaponType weaponType) {
-        this.itemStack = new ItemStack(weaponType.getDefaultMaterialType().getWeaponMaterial(weaponType));
-        this.weaponType = weaponType;
-        this.weaponName = weaponName;
-        this.weaponMeta = new WeaponMeta(weaponType);
-
-        setInitialDefaultMeta();
-    }
-
-    public Weapon(
-            @NotNull String weaponName,
-            @NotNull WeaponType weaponType,
-            @NotNull EquipmentMaterialType materialType
-    ) {
-        this.itemStack = new ItemStack(materialType.getWeaponMaterial(weaponType));
+        this.itemStack = new ItemStack(weaponType.getVanillaItem());
         this.weaponType = weaponType;
         this.weaponName = weaponName;
         this.weaponMeta = new WeaponMeta(weaponType);
@@ -69,12 +52,11 @@ public abstract class Weapon {
         return weaponModifiers != null;
     }
 
-    public void setSpell(Spell spell) {
-        this.spell = spell;
-    }
-
     private void setInitialDefaultMeta() {
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
+
+        String displayName = "&r" + weaponType.getDisplayName();
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
@@ -122,15 +104,10 @@ public abstract class Weapon {
 
             lore.add("");
             lore.addAll(translatedCustomLore);
-            Bukkit.getLogger().warning(lore + "");
         }
 
         meta.setCustomModelData(weaponMeta.getCustomModel());
-        Bukkit.getLogger().warning(lore + "");
         meta.setLore(lore);
-
-        Bukkit.getLogger().warning(lore + "");
-        Bukkit.getLogger().warning(meta.getLore() + "");
 
         itemStack.setItemMeta(meta);
     }
@@ -194,10 +171,6 @@ public abstract class Weapon {
 
     public @NotNull WeaponType getWeaponType() {
         return weaponType;
-    }
-
-    public Spell getSpell() {
-        return spell;
     }
 
     public @NotNull String getWeaponName() {

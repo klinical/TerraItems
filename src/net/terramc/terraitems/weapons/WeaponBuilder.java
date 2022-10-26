@@ -5,14 +5,16 @@ import net.terramc.terraitems.effects.EffectTriggerType;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.AttributeConfiguration;
-import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
 import net.terramc.terraitems.spells.DragonBreathe;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
-import net.terramc.terraitems.weapons.melee.MeleeWeapon;
-import net.terramc.terraitems.weapons.ranged.ProjectileModifiers;
-import net.terramc.terraitems.weapons.ranged.RangedWeapon;
+import net.terramc.terraitems.weapons.magic.MagicWeapon;
+import net.terramc.terraitems.weapons.magic.SpellBook;
+import net.terramc.terraitems.weapons.magic.Staff;
+import net.terramc.terraitems.weapons.magic.Wand;
+import net.terramc.terraitems.weapons.melee.*;
+import net.terramc.terraitems.weapons.ranged.*;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +26,6 @@ import java.util.stream.Collectors;
 
 public class WeaponBuilder {
     private WeaponType weaponType;
-    private EquipmentMaterialType materialType;
     private WeaponMeta meta;
     private WeaponModifiers modifiers;
     private ProjectileModifiers projectileModifiers;
@@ -38,26 +39,47 @@ public class WeaponBuilder {
         Objects.requireNonNull(weaponType);
 
         Weapon weapon;
-        switch (weaponType.damageType()) {
-            case MELEE:
-                if (materialType != null)
-                    weapon = new MeleeWeapon(weaponName, weaponType, materialType);
-                else
-                    weapon = new MeleeWeapon(weaponName, weaponType);
-                break;
-
-            case RANGED:
-                RangedWeapon rangedWeapon = new RangedWeapon(weaponName, weaponType);
-
-                if (projectileModifiers != null)
-                    rangedWeapon.setProjectileModifiers(projectileModifiers);
-
-                weapon = rangedWeapon;
-                break;
-
+        switch (weaponType) {
             default:
-                throw new IllegalStateException("Invalid damageType when building weapon.");
+            case SWORD:
+                weapon = new Sword(weaponName);
+                break;
+            case DAGGER:
+                weapon = new Dagger(weaponName);
+                break;
+            case AXE:
+                weapon = new Axe(weaponName);
+                break;
+            case MACE:
+                weapon = new Mace(weaponName);
+                break;
+            case GLAIVE:
+                weapon = new Glaive(weaponName);
+                break;
+
+            case GUN:
+                weapon = new Gun(weaponName);
+                break;
+            case BOW:
+                weapon = new Bow(weaponName);
+                break;
+            case CROSSBOW:
+                weapon = new Crossbow(weaponName);
+                break;
+
+            case STAFF:
+                weapon = new Staff(weaponName, Objects.requireNonNull(spell));
+                break;
+            case SPELL_BOOK:
+                weapon = new SpellBook(weaponName, Objects.requireNonNull(spell));
+                break;
+            case WAND:
+                weapon = new Wand(weaponName, Objects.requireNonNull(spell));
+                break;
         }
+
+        if (weapon instanceof RangedWeapon && projectileModifiers != null)
+            ((RangedWeapon) weapon).setProjectileModifiers(projectileModifiers);
 
         if (meta != null)
             weapon.setWeaponMeta(meta);
@@ -69,9 +91,6 @@ public class WeaponBuilder {
             weapon.setEffects(effects);
             buildEffectLore(weapon);
         }
-
-        if (spell != null)
-            weapon.setSpell(spell);
 
         return weapon;
     }
@@ -111,7 +130,7 @@ public class WeaponBuilder {
         if (spell == null)
             return this;
 
-        if ("DRAGON_BREATHE".equals(spell.toUpperCase())) {
+        if ("DRAGON_BREATHE".equalsIgnoreCase(spell)) {
             this.spell = new DragonBreathe();
         }
 
@@ -142,20 +161,9 @@ public class WeaponBuilder {
         return this;
     }
 
-    public WeaponBuilder setMaterialType(@Nullable String materialType) {
-        if (materialType == null)
-            this.materialType = null;
-        else
-            this.materialType = EquipmentMaterialType.valueOf(materialType.toUpperCase());
-
-        return this;
-    }
-
     public WeaponMeta getMeta() {
         return meta;
     }
-
-
 
     public WeaponBuilder setMeta(@Nullable ConfigurationSection section) {
         if (section == null) {
@@ -213,11 +221,11 @@ public class WeaponBuilder {
 
     public WeaponBuilder setModifiers(@Nullable ConfigurationSection section) {
         if (section == null) {
-            modifiers = new WeaponModifiers(weaponType);
+            modifiers = new WeaponModifiers();
             return this;
         }
 
-        modifiers = new WeaponModifiers(weaponType);
+        modifiers = new WeaponModifiers();
 
         List<AttributeConfiguration> attributeConfigurations = new ArrayList<>();
         List<String> attributesStringList = section.getStringList("attributes");
