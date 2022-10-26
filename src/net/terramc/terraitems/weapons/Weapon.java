@@ -7,7 +7,9 @@ import net.terramc.terraitems.effects.EffectTriggerType;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.*;
+import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -35,6 +37,7 @@ public abstract class Weapon {
     @Nonnull protected WeaponMeta weaponMeta;
     @Nullable protected HashMap<String, EffectTrigger> weaponEffects;
     @Nullable protected WeaponModifiers weaponModifiers;
+    private Spell spell;
 
     public Weapon(@NotNull String weaponName, WeaponType weaponType) {
         this.itemStack = new ItemStack(weaponType.getDefaultMaterialType().getWeaponMaterial(weaponType));
@@ -64,6 +67,10 @@ public abstract class Weapon {
 
     public boolean hasWeaponModifiers() {
         return weaponModifiers != null;
+    }
+
+    public void setSpell(Spell spell) {
+        this.spell = spell;
     }
 
     private void setInitialDefaultMeta() {
@@ -107,15 +114,23 @@ public abstract class Weapon {
         if (weaponMeta.hasCustomLore()) {
             List<String> translatedCustomLore = weaponMeta.getCustomLore()
                     .stream()
-                    .map(l -> ChatColor.translateAlternateColorCodes('&', l))
+                    .map(l -> {
+                        String builder = "&f" + l;
+                        return ChatColor.translateAlternateColorCodes('&', builder);
+                    })
                     .collect(Collectors.toList());
 
             lore.add("");
             lore.addAll(translatedCustomLore);
+            Bukkit.getLogger().warning(lore + "");
         }
 
         meta.setCustomModelData(weaponMeta.getCustomModel());
+        Bukkit.getLogger().warning(lore + "");
         meta.setLore(lore);
+
+        Bukkit.getLogger().warning(lore + "");
+        Bukkit.getLogger().warning(meta.getLore() + "");
 
         itemStack.setItemMeta(meta);
     }
@@ -179,6 +194,10 @@ public abstract class Weapon {
 
     public @NotNull WeaponType getWeaponType() {
         return weaponType;
+    }
+
+    public Spell getSpell() {
+        return spell;
     }
 
     public @NotNull String getWeaponName() {

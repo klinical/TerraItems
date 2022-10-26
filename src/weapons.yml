@@ -35,3 +35,17 @@ heavy-blunderbuss:
     rarity: uncommon
     lore:
       - "&dIt do be shootin'."
+
+void-book:
+  type: spell_book
+  spell: dragon_breathe
+  stats:
+    # increases max mana
+    mana: 2
+    # increases mana recovery rate
+    mana-regen: 1
+  meta:
+    title: "Void Book"
+    rarity: rare
+    lore:
+      - "One may ponder how it made it's way to our world."

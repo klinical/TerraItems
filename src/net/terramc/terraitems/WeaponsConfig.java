@@ -47,6 +47,7 @@ public class WeaponsConfig {
                         .setModifiers(itemSection.getConfigurationSection("modifiers"))
                         .setEffects(itemSection.getConfigurationSection("effects"))
                         .setProjectileModifiers(itemSection.getConfigurationSection("projectile"))
+                        .setSpell(itemSection.getString("spell"))
                         .build();
 
                 items.put(itemName, weapon);

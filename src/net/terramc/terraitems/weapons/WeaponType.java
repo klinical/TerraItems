@@ -13,6 +13,7 @@ public enum WeaponType {
     GLAIVE,
     BOW,
     CROSSBOW,
+    SPELL_BOOK,
     GUN;
 
     /**
@@ -97,6 +98,7 @@ public enum WeaponType {
             case BOW: return "Bow";
             case CROSSBOW: return "Crossbow";
             case GUN: return "Gun";
+            case SPELL_BOOK: return "Spell Book";
         }
     }
 
@@ -112,6 +114,7 @@ public enum WeaponType {
             case BOW: return "BOW";
             case GUN:
             case CROSSBOW: return "CROSSBOW";
+            case SPELL_BOOK: return "BOOK";
         }
     }
 
@@ -127,6 +130,7 @@ public enum WeaponType {
                 return WeaponDamageType.MELEE;
             case BOW:
             case GUN:
+            case SPELL_BOOK:
             case CROSSBOW:
                 return WeaponDamageType.RANGED;
         }
@@ -149,6 +153,8 @@ public enum WeaponType {
                 return EquipmentMaterialType.CROSSBOW;
             case GUN:
                 return EquipmentMaterialType.GUN;
+            case SPELL_BOOK:
+                return EquipmentMaterialType.SPELL_BOOK;
         }
     }
 
@@ -162,6 +168,7 @@ public enum WeaponType {
                 return 0;
 
             case DAGGER:
+            case SPELL_BOOK:
             case MACE:
             case STAFF:
             case GLAIVE:

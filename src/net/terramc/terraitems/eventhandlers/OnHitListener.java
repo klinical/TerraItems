@@ -1,14 +1,13 @@
 package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.WeaponsConfig;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.effects.manager.EffectManager;
 import net.terramc.terraitems.shared.NamespaceKeys;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import net.terramc.terraitems.weapons.configuration.ProjectileModifiers;
+import net.terramc.terraitems.weapons.ranged.ProjectileModifiers;
 import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;

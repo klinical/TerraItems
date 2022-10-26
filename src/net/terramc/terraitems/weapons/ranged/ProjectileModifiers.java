@@ -1,4 +1,4 @@
-package net.terramc.terraitems.weapons.configuration;
+package net.terramc.terraitems.weapons.ranged;
 
 public class ProjectileModifiers {
     private Integer projectileDamage;

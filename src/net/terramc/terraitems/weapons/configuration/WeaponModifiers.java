@@ -4,6 +4,7 @@ import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.weapons.WeaponType;
+import net.terramc.terraitems.weapons.ranged.ProjectileModifiers;
 
 import java.util.ArrayList;
 import java.util.List;

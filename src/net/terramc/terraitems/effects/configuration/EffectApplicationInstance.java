@@ -54,9 +54,6 @@ public class EffectApplicationInstance {
                 break;
 
             case DAMAGE:
-                Bukkit.getLogger().info(target.getHealth() + " from bleed");
-                Bukkit.getLogger().info(target.toString());
-                Bukkit.getLogger().info(effect.getLevel() + " level");
                 if (target.getHealth() - effect.getLevel() < 0)
                     target.setHealth(0);
                 else

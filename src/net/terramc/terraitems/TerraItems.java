@@ -7,7 +7,7 @@ import net.terramc.terraitems.commands.TerraConfig;
 import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
-import net.terramc.terraitems.recipe.CopperBullet;
+import net.terramc.terraitems.ammunition.CopperBullet;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.weapons.melee.MeleeWeapon;
 import net.terramc.terraitems.weapons.WeaponType;

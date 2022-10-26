@@ -7,8 +7,11 @@ import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.shared.EquipmentMaterialType;
 import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.spells.DragonBreathe;
+import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
 import net.terramc.terraitems.weapons.melee.MeleeWeapon;
+import net.terramc.terraitems.weapons.ranged.ProjectileModifiers;
 import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -26,6 +29,8 @@ public class WeaponBuilder {
     private WeaponModifiers modifiers;
     private ProjectileModifiers projectileModifiers;
     private HashMap<String, EffectTrigger> effects;
+    private Spell spell;
+
     private String weaponName;
 
     public Weapon build() {
@@ -65,6 +70,9 @@ public class WeaponBuilder {
             buildEffectLore(weapon);
         }
 
+        if (spell != null)
+            weapon.setSpell(spell);
+
         return weapon;
     }
 
@@ -97,6 +105,17 @@ public class WeaponBuilder {
 
         meta.setLore(lore);
         weapon.getItemStack().setItemMeta(meta);
+    }
+
+    public WeaponBuilder setSpell(String spell) {
+        if (spell == null)
+            return this;
+
+        if ("DRAGON_BREATHE".equals(spell.toUpperCase())) {
+            this.spell = new DragonBreathe();
+        }
+
+        return this;
     }
 
     public WeaponBuilder setName(String name) {
@@ -135,6 +154,8 @@ public class WeaponBuilder {
     public WeaponMeta getMeta() {
         return meta;
     }
+
+
 
     public WeaponBuilder setMeta(@Nullable ConfigurationSection section) {
         if (section == null) {

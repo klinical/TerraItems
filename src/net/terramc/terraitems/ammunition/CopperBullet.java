@@ -1,4 +1,4 @@
-package net.terramc.terraitems.recipe;
+package net.terramc.terraitems.ammunition;
 
 import net.terramc.terraitems.TerraItems;
 import org.bukkit.ChatColor;

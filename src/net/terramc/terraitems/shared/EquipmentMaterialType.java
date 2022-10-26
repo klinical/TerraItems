@@ -6,6 +6,7 @@ import org.bukkit.Material;
 public enum EquipmentMaterialType {
     BOW,
     CROSSBOW,
+    SPELL_BOOK,
     GUN,
     IRON,
     DIAMOND,
@@ -28,6 +29,9 @@ public enum EquipmentMaterialType {
 
             case GUN:
                 return Material.CARROT_ON_A_STICK;
+
+            case SPELL_BOOK:
+                return Material.BOOK;
 
             default:
             case IRON:
