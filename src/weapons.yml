@@ -1,19 +1,19 @@
 kitchen-knife:
   type: dagger
-  modifiers:
-    #attributes:
-    #value: 5
-    #slots:
-    # - etc
-    effects:
-      - bleed-1
-    enchantments:
-      - sharpness 2
+  stats:
+    crit_chance: 3
+  effects:
+    bleed-1:
+      # What triggers the effect (melee-hit, projectile-hit, periodic)
+      trigger: hit
+      # Chance of applying effect each time there is a trigger event
+      chance: 5
   meta:
     title: "Kitchen Knife"
     rarity: uncommon
     lore:
-      - "&dStandard issue kitchen-ware."
+      - "Standard issue kitchen-ware."
+    model: 3
 
 muramasa:
   type: sword
@@ -60,18 +60,18 @@ heavy-blunderbuss:
     title: "Heavy Blunderbuss"
     rarity: uncommon
     lore:
-      - "&dIt do be shootin'."
+      - "It do be shootin'."
 
 void-book:
   type: spell_book
   spell: dragon_breathe
   stats:
-    # increases max mana
-    mana: 2
-    # increases mana recovery rate
-    mana-regen: 1
+    # increases crit chance
+    crit_chance: 2
+    # increases spell damage
+    spell_power: 1
   meta:
     title: "Void Book"
     rarity: rare
     lore:
-      - "One may ponder how it made it's way to our world."
+      - "One may ponder how it made its way to our world."

@@ -3,9 +3,9 @@ package net.terramc.terraitems.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.terramc.terraitems.TerraItems;
+import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.*;
-import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -34,6 +35,7 @@ public abstract class Weapon {
     @Nonnull protected WeaponMeta weaponMeta;
     @Nullable protected HashMap<String, EffectTrigger> weaponEffects;
     @Nullable protected WeaponModifiers weaponModifiers;
+    @Nullable protected List<StatModifier> statModifiers;
 
     public Weapon(@NotNull String weaponName, WeaponType weaponType) {
         this.itemStack = new ItemStack(weaponType.getVanillaItem());
@@ -58,10 +60,6 @@ public abstract class Weapon {
         String displayName = "&r" + weaponType.getDisplayName();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
 
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("");
-        meta.setLore(lore);
-
         meta.setCustomModelData(weaponType.getDefaultModel());
         meta.setAttributeModifiers(getDefaultModifiers());
 
@@ -69,7 +67,19 @@ public abstract class Weapon {
         NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
         data.set(key, PersistentDataType.STRING, weaponName);
 
+        List<String> baseLore = new ArrayList<>(getRarityAndWeaponTypeLore());
+        meta.setLore(baseLore);
+
         itemStack.setItemMeta(meta);
+    }
+
+    @Nullable
+    public List<StatModifier> getStatModifiers() {
+        return statModifiers;
+    }
+
+    public void setStatModifiers(@NonNull List<StatModifier> statModifiers) {
+        this.statModifiers = statModifiers;
     }
 
     public void setEffects(HashMap<String, EffectTrigger> effects) {
@@ -84,31 +94,12 @@ public abstract class Weapon {
             throw new IllegalStateException("ItemStack ItemMeta is null");
 
         Rarity rarity = weaponMeta.getRarity();
-        List<String> lore = meta.getLore() != null ? meta.getLore() : new ArrayList<>();
-
-        lore.addAll(getWeaponInfoLore());
-
         if (weaponMeta.hasTitle())
             meta.setDisplayName(ChatColor.translateAlternateColorCodes(
                     '&',
                     "&" + rarity.titleColor().getChar() + weaponMeta.getTitle()));
 
-        if (weaponMeta.hasCustomLore()) {
-            List<String> translatedCustomLore = weaponMeta.getCustomLore()
-                    .stream()
-                    .map(l -> {
-                        String builder = "&f" + l;
-                        return ChatColor.translateAlternateColorCodes('&', builder);
-                    })
-                    .collect(Collectors.toList());
-
-            lore.add("");
-            lore.addAll(translatedCustomLore);
-        }
-
         meta.setCustomModelData(weaponMeta.getCustomModel());
-        meta.setLore(lore);
-
         itemStack.setItemMeta(meta);
     }
 
@@ -165,6 +156,64 @@ public abstract class Weapon {
         itemStack.setItemMeta(meta);
     }
 
+    protected List<String> buildLore() {
+        List<String> newLore = new ArrayList<>(getWeaponInformationLore());
+
+        if (this.weaponMeta.hasCustomLore()) {
+            newLore.add("");
+            newLore.addAll(this.weaponMeta.getCustomLore());
+        }
+
+        if (this.hasWeaponEffects()) {
+            newLore.add("");
+            newLore.addAll(getEffectLore());
+        }
+
+        return newLore;
+    }
+
+    protected List<String> getWeaponInformationLore() {
+        List<String> lore = new ArrayList<>(getRarityAndWeaponTypeLore());
+        if (this.statModifiers != null)
+            lore.addAll(getStatModifierLore());
+
+        return lore;
+    }
+
+    protected List<String> getEffectLore() {
+        if (this.weaponEffects == null)
+            return new ArrayList<>();
+
+        Set<String> effectNames = this.weaponEffects.keySet();
+        List<String> effectLore = new ArrayList<>();
+        for (String effectName : effectNames) {
+            TerraEffect effect = TerraItems.lookupTerraPlugin().getEffectsConfig().getItems().get(effectName);
+
+            if (effect.getMeta() != null && effect.getMeta().getDisplay() != null) {
+                String displayLore = effect.getMeta().getDisplay();
+                String[] l = displayLore.split("\n");
+
+                for (String ls : l) {
+                    effectLore.add(ChatColor.translateAlternateColorCodes('&', "&a" + ls));
+                }
+            }
+        }
+
+        return effectLore;
+    }
+
+    protected List<String> getStatModifierLore() {
+        if (this.statModifiers != null)
+            return this.statModifiers
+                    .stream()
+                    .map((statModifier -> ChatColor.GREEN + "+" +
+                            statModifier.getAmount() + " " +
+                            statModifier.getDisplayName()))
+                    .collect(Collectors.toList());
+        else
+            return new ArrayList<>();
+    }
+
     public @NotNull ItemStack getItemStack() {
         return itemStack;
     }
@@ -189,7 +238,20 @@ public abstract class Weapon {
         return weaponModifiers;
     }
 
-    public abstract List<String> getWeaponInfoLore();
+    public List<String> getRarityAndWeaponTypeLore() {
+        Rarity rarity = weaponMeta.getRarity();
+
+        String loreLine = ChatColor.translateAlternateColorCodes(
+                '&',
+                Rarity.getPrefix(rarity) +
+                        rarity.getDisplayName() +
+                        "&r &7" + weaponType.getDisplayName());
+
+        List<String> loreList = new ArrayList<>();
+        loreList.add(loreLine);
+
+        return loreList;
+    }
 
     protected abstract ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers();
 }

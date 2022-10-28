@@ -20,7 +20,7 @@ public abstract class MeleeWeapon extends Weapon {
         super(weaponName, weaponType);
     }
 
-    public List<String> getWeaponInfoLore() {
+    public List<String> getRarityAndWeaponTypeLore() {
         Rarity rarity = weaponMeta.getRarity();
 
         String loreLine = ChatColor.translateAlternateColorCodes(

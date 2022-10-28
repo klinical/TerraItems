@@ -52,7 +52,12 @@ public class WeaponMeta {
     }
 
     public List<String> getCustomLore() {
-        return customLore;
+        return customLore.stream()
+                .map(l -> {
+                    String builder = "&7" + l;
+                    return ChatColor.translateAlternateColorCodes('&', builder);
+                })
+                .collect(Collectors.toList());
     }
 
     public void setRarity(Rarity rarity) {

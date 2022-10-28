@@ -6,10 +6,11 @@ import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.shared.StatModifier;
+import net.terramc.terraitems.shared.StatModifierType;
 import net.terramc.terraitems.spells.DragonBreathe;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.configuration.*;
-import net.terramc.terraitems.weapons.magic.MagicWeapon;
 import net.terramc.terraitems.weapons.magic.SpellBook;
 import net.terramc.terraitems.weapons.magic.Staff;
 import net.terramc.terraitems.weapons.magic.Wand;
@@ -29,6 +30,7 @@ public class WeaponBuilder {
     private WeaponMeta meta;
     private WeaponModifiers modifiers;
     private ProjectileModifiers projectileModifiers;
+    private List<StatModifier> statModifiers;
     private HashMap<String, EffectTrigger> effects;
     private Spell spell;
 
@@ -87,43 +89,21 @@ public class WeaponBuilder {
         if (modifiers != null)
             weapon.setWeaponModifiers(modifiers);
 
+        if (statModifiers != null)
+            weapon.setStatModifiers(statModifiers);
+
         if (effects != null) {
             weapon.setEffects(effects);
-            buildEffectLore(weapon);
         }
+
+        ItemMeta itemMeta = weapon.itemStack.getItemMeta();
+        if (itemMeta == null)
+            throw new RuntimeException();
+
+        itemMeta.setLore(weapon.buildLore());
+        weapon.getItemStack().setItemMeta(itemMeta);
 
         return weapon;
-    }
-
-    private void buildEffectLore(Weapon weapon) {
-        weapon.setEffects(effects);
-
-        ItemMeta meta = weapon.getItemStack().getItemMeta();
-        if (meta == null)
-            throw new IllegalStateException("ItemStack ItemMeta is null");
-
-        List<String> lore = meta.getLore() != null ?
-                meta.getLore() : new ArrayList<>();
-
-        if (weapon.getWeaponEffects() == null)
-            return;
-
-        lore.add("");
-        for (String effectName : weapon.getWeaponEffects().keySet()) {
-            TerraEffect effect = TerraItems.lookupTerraPlugin().getEffectsConfig().getItems().get(effectName);
-
-            if (effect.getMeta() != null && effect.getMeta().getDisplay() != null) {
-                String displayLore = effect.getMeta().getDisplay();
-                String[] l = displayLore.split("\n");
-
-                for (String ls : l) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', "&a" + ls));
-                }
-            }
-        }
-
-        meta.setLore(lore);
-        weapon.getItemStack().setItemMeta(meta);
     }
 
     public WeaponBuilder setSpell(String spell) {
@@ -139,6 +119,23 @@ public class WeaponBuilder {
 
     public WeaponBuilder setName(String name) {
         this.weaponName = name;
+
+        return this;
+    }
+
+    public WeaponBuilder setStatModifiers(ConfigurationSection section) {
+        if (section == null)
+            return this;
+
+        statModifiers = new ArrayList<>();
+
+        Set<String> statKeys = section.getKeys(false);
+        for (String statKey : statKeys) {
+            StatModifierType modifierType = StatModifierType.valueOf(statKey.toUpperCase());
+            int statAmount = section.getInt(statKey);
+
+            statModifiers.add(new StatModifier(modifierType, statAmount));
+        }
 
         return this;
     }
