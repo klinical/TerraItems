@@ -1,0 +1,21 @@
+light-shot:
+  title: "Light Shot"
+  type: bullet
+  model: 1
+
+heavy-shot:
+  title: "Heavy Shot"
+  type: bullet
+  model: 2
+  modifiers:
+    velocity: -2
+    damage: 1.5
+    knockback: 0.5
+
+obsidian-arrow:
+  title: "Obsidian Arrow"
+  type: arrow
+  model: 1
+  modifiers:
+    velocity: 0.5
+    damage: 1

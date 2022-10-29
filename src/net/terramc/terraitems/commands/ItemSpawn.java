@@ -1,6 +1,7 @@
 package net.terramc.terraitems.commands;
 
 import net.terramc.terraitems.TerraItems;
+import net.terramc.terraitems.ammunition.Ammo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -48,17 +49,11 @@ public class ItemSpawn implements CommandExecutor {
                         }
                         break;
                     case "ammo":
-                        ItemStack bulletStack = new ItemStack(Material.FIREWORK_STAR);
-                        ItemMeta bulletMeta = bulletStack.getItemMeta();
-                        bulletMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&rCopper Bullet"));
-                        bulletMeta.setCustomModelData(1);
-                        PersistentDataContainer pdc = bulletMeta.getPersistentDataContainer();
+                        if (args.length == 2) {
+                            Ammo ammo = plugin.getAmmoConfig().getItems().get(args[1]);
 
-                        pdc.set(new NamespacedKey(TerraItems.lookupTerraPlugin(), "AMMUNITION"), PersistentDataType.STRING, "COPPER_BULLET");
-                        bulletStack.setItemMeta(bulletMeta);
-                        bulletStack.setAmount(64);
-
-                        player.getInventory().addItem(bulletStack);
+                            player.getInventory().addItem(ammo.getItemStack());
+                        }
                         break;
                     case "list":
                         if (Objects.equals(args[1], "weapons")) {
@@ -69,6 +64,10 @@ public class ItemSpawn implements CommandExecutor {
                             Set<String> itemKeys = plugin.getEffectsConfig().getItems().keySet();
 
                             player.sendMessage(Arrays.toString(itemKeys.toArray()));
+                        } else if (Objects.equals(args[1], "ammo")) {
+                            Set<String> ammoKeys = plugin.getAmmoConfig().getItems().keySet();
+
+                            player.sendMessage(Arrays.toString(ammoKeys.toArray()));
                         }
                         break;
 

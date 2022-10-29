@@ -7,7 +7,7 @@ import net.terramc.terraitems.commands.TerraConfig;
 import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
-import net.terramc.terraitems.ammunition.CopperBullet;
+import net.terramc.terraitems.recipe.Recipe;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +18,7 @@ public class TerraItems extends JavaPlugin {
 
     private WeaponsConfig weaponsConfig;
     private EffectsConfig effectsConfig;
+    private AmmoConfig ammoConfig;
     private static final Gson gson = buildGson();
 
     @Override
@@ -44,6 +45,8 @@ public class TerraItems extends JavaPlugin {
     private void initConfigs() {
         effectsConfig = new EffectsConfig(this);
         weaponsConfig = new WeaponsConfig(this);
+        ammoConfig = new AmmoConfig(this);
+
         saveDefaultConfig();
     }
 
@@ -97,7 +100,7 @@ public class TerraItems extends JavaPlugin {
 //            }
 //        }
 
-        Bukkit.addRecipe(CopperBullet.RECIPE);
+        //Bukkit.addRecipe(Recipe.LIGHT_SHOT);
     }
 
     public WeaponsConfig getWeaponsConfig() {
@@ -107,6 +110,8 @@ public class TerraItems extends JavaPlugin {
     public EffectsConfig getEffectsConfig() {
         return effectsConfig;
     }
+
+    public AmmoConfig getAmmoConfig() { return ammoConfig; }
 
     public static TerraItems lookupTerraPlugin() {
         return (TerraItems) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
