@@ -1,11 +1,10 @@
 package net.terramc.terraitems.weapons.ranged;
 
-import com.google.common.collect.ArrayListMultimap;
+import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,46 +22,35 @@ public abstract class RangedWeapon extends Weapon {
         this.projectileModifiers = modifiers;
     }
 
-    @Override
-    public List<String> buildLore() {
-        List<String> newLore = new ArrayList<>(getWeaponInformationLore());
-
-        newLore.add("");
-
-        if (this.weaponMeta.hasCustomLore()) {
-            newLore.addAll(this.weaponMeta.getCustomLore());
-            newLore.add("");
-        }
-
-        if (this.hasWeaponEffects()) {
-            newLore.addAll(getEffectLore());
-        }
-
-        if (this.projectileModifiers != null) {
-            newLore.add("");
-            newLore.add(ChatColor.GRAY + "When Fired:");
-            newLore.add(ChatColor.translateAlternateColorCodes(
-                    '&', "&9+" +
-                            (double) projectileModifiers.getReloadSpeed() / 20L +
-                            "s Reload Speed"
-            ));
-            newLore.add(ChatColor.translateAlternateColorCodes(
-                    '&', "&9+" +
-                            projectileModifiers.getProjectileDamage() +
-                            " Projectile Damage"
-            ));
-        }
-
-        return newLore;
-    }
-
     public ProjectileModifiers getProjectileModifiers() {
         return projectileModifiers;
     }
 
 
     @Override
-    protected ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers() {
-        return ArrayListMultimap.create();
+    protected List<AttributeConfiguration> getDefaultModifiers() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    protected @NotNull List<String> getPostCustomLoreLore() {
+        List<String> postLore = super.getPostCustomLoreLore();
+
+        if (this.projectileModifiers != null) {
+            postLore.add("");
+            postLore.add(ChatColor.GRAY + "When Fired:");
+            postLore.add(ChatColor.translateAlternateColorCodes(
+                    '&', "&9+" +
+                            (double) projectileModifiers.getReloadSpeed() / 20L +
+                            "s Reload Speed"
+            ));
+            postLore.add(ChatColor.translateAlternateColorCodes(
+                    '&', "&9+" +
+                            projectileModifiers.getProjectileDamage() +
+                            " Projectile Damage"
+            ));
+        }
+
+        return postLore;
     }
 }

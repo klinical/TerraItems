@@ -1,90 +1,71 @@
 package net.terramc.terraitems.ammunition;
 
-import net.terramc.terraitems.TerraItems;
-import org.bukkit.Bukkit;
+import net.terramc.terraitems.item.Item;
+import net.terramc.terraitems.shared.ItemType;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Ammo {
-    protected ItemStack itemStack;
-    private AmmoModifiers modifiers;
+public abstract class Ammo extends Item {
+    private AmmoModifiers ammoModifiers;
+    private final AmmoType ammoType;
 
-    public Ammo(String ammoName, String displayName, Material material) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta bulletMeta = itemStack.getItemMeta();
+    public Ammo(String ammoName, AmmoType ammoType) {
+        super(ammoName, ammoType.getVanillaItem(), ItemType.AMMO);
+        this.ammoType = ammoType;
 
-        if (bulletMeta == null)
-            throw new IllegalStateException("Could not create bullet recipe, null meta");
-
-        bulletMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ChatColor.RESET + displayName));
-        PersistentDataContainer pdc = bulletMeta.getPersistentDataContainer();
-
-        pdc.set(
-                new NamespacedKey(TerraItems.lookupTerraPlugin(), "AMMUNITION"),
-                PersistentDataType.STRING,
-                ammoName
-        );
-
-        itemStack.setItemMeta(bulletMeta);
-        this.itemStack = itemStack;
+        setDisplayName(ammoType.getDisplayName());
+        setLore(getItemDescriptionLore());
     }
 
-    public ItemStack getItemStack() {
-        return itemStack;
+    public AmmoModifiers getAmmoModifiers() {
+        return ammoModifiers;
     }
 
-    public AmmoModifiers getModifiers() {
-        return modifiers;
-    }
-
-    public void setModifiers(AmmoModifiers modifiers) {
-        Bukkit.getLogger().warning(modifiers.getKnockback() + " wtf");
-        this.modifiers = modifiers;
+    @Override
+    protected @NotNull List<String> getPreCustomLoreLore() {
         List<String> lore = new ArrayList<>();
 
-        if (modifiers.getDamage() > 0) {
-            lore.add(ChatColor.GREEN + "+" + modifiers.getDamage() + " Damage");
-        } else if (modifiers.getDamage() < 0) {
-            lore.add(ChatColor.RED + "" + modifiers.getDamage() + " Damage");
+        if (ammoModifiers.getDamage() > 0) {
+            lore.add(ChatColor.GREEN + "+" + ammoModifiers.getDamage() + " Damage");
+        } else if (ammoModifiers.getDamage() < 0) {
+            lore.add(ChatColor.RED + "" + ammoModifiers.getDamage() + " Damage");
         }
 
-        if (modifiers.getKnockback() > 0) {
-            lore.add(ChatColor.GREEN + "+" + modifiers.getKnockback() + " Knockback");
-        } else if (modifiers.getKnockback() < 0) {
-            lore.add(ChatColor.RED + "" + modifiers.getKnockback() + " Knockback");
+        if (ammoModifiers.getKnockback() > 0) {
+            lore.add(ChatColor.GREEN + "+" + ammoModifiers.getKnockback() + " Knockback");
+        } else if (ammoModifiers.getKnockback() < 0) {
+            lore.add(ChatColor.RED + "" + ammoModifiers.getKnockback() + " Knockback");
         }
 
-        if (modifiers.getVelocity() > 0) {
-            lore.add(ChatColor.GREEN + "+" + modifiers.getVelocity() + " Velocity");
-        } else if (modifiers.getVelocity() < 0) {
-            lore.add(ChatColor.RED + "" + modifiers.getVelocity() + " Velocity");
+        if (ammoModifiers.getVelocity() > 0) {
+            lore.add(ChatColor.GREEN + "+" + ammoModifiers.getVelocity() + " Velocity");
+        } else if (ammoModifiers.getVelocity() < 0) {
+            lore.add(ChatColor.RED + "" + ammoModifiers.getVelocity() + " Velocity");
         }
 
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null)
-            return;
-
-        meta.setLore(lore);
-        itemStack.setItemMeta(meta);
+        return lore;
     }
 
-    public void setCustomModel(int model) {
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null)
-            throw new IllegalStateException("meta null when setting custom model for ammo");
-
-        meta.setCustomModelData(model);
-
-        itemStack.setItemMeta(meta);
+    @Override
+    protected @NotNull List<String> getPostCustomLoreLore() {
+        return new ArrayList<>();
     }
 
+    public void setAmmoModifiers(AmmoModifiers modifiers) {
+        this.ammoModifiers = modifiers;
 
+        updateLore();
+    }
+
+    public @NotNull String getItemDescriptionString() {
+        return ammoType.getDisplayName();
+    }
+
+    @Override
+    protected int getDefaultModel() {
+        return ammoType.getDefaultModel();
+    }
 }

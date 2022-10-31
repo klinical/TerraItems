@@ -1,5 +1,6 @@
 kitchen-knife:
   type: dagger
+  rarity: uncommon
   stats:
     crit_chance: 3
   effects:
@@ -9,43 +10,44 @@ kitchen-knife:
       # Chance of applying effect each time there is a trigger event
       chance: 5
   meta:
-    title: "Kitchen Knife"
-    rarity: uncommon
+    display-name: "Kitchen Knife"
     lore:
       - "Standard issue kitchen-ware."
     model: 3
 
 muramasa:
   type: sword
+  rarity: epic
   meta:
-    title: "Muramasa"
-    rarity: epic
+    display-name: "Muramasa"
     model: 2
 
 glow-sword:
   type: sword
+  rarity: rare
   meta:
-    title: "Glow Sword"
-    rarity: rare
+    display-name: "Glow Sword"
+
     model: 3
 
 fire-sword:
   type: sword
+  rarity: epic
   meta:
-    title: "Fire Sword"
-    rarity: epic
+    display-name: "Fire Sword"
     model: 5
 
 ice-sword:
   type: sword
+  rarity: epic
   meta:
-    title: "Ice Sword"
-    rarity: epic
+    display-name: "Ice Sword"
     model: 4
 
 heavy-blunderbuss:
   type: gun
-  projectile:
+  rarity: uncommon
+  projectile-modifiers:
     reload-speed: 35
     damage: 9
     # is a multiplication modifier of a normalized/2 velocity vector of the projectile
@@ -57,21 +59,20 @@ heavy-blunderbuss:
       # Chance of applying effect each time there is a trigger event
       chance: 5
   meta:
-    title: "Heavy Blunderbuss"
-    rarity: uncommon
+    display-name: "Heavy Blunderbuss"
     lore:
       - "It do be shootin'."
 
 void-book:
   type: spell_book
   spell: dragon_breathe
+  rarity: rare
   stats:
     # increases crit chance
     crit_chance: 2
     # increases spell damage
     spell_power: 1
   meta:
-    title: "Void Book"
-    rarity: rare
+    display-name: "Void Book"
     lore:
       - "One may ponder how it made its way to our world."

@@ -1,21 +1,25 @@
 light-shot:
-  title: "Light Shot"
   type: bullet
-  model: 1
+  meta:
+    display-name: "Light Shot"
 
 heavy-shot:
-  title: "Heavy Shot"
   type: bullet
-  model: 2
-  modifiers:
+  rarity: uncommon
+  projectile-modifiers:
     velocity: -2
     damage: 1.5
     knockback: 0.5
+  meta:
+    display-name: "Heavy Shot"
+    model: 2
 
 obsidian-arrow:
-  title: "Obsidian Arrow"
   type: arrow
-  model: 1
-  modifiers:
+  rarity: uncommon
+  meta:
+    display-name: "Obsidian Arrow"
+    model: 1
+  projectile-modifiers:
     velocity: 0.5
     damage: 1

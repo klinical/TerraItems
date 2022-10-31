@@ -1,8 +1,7 @@
 package net.terramc.terraitems.eventhandlers;
 
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.WeaponsConfig;
-import net.terramc.terraitems.shared.NamespaceKeys;
+import net.terramc.terraitems.shared.ItemType;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.ranged.RangedWeapon;
 import org.bukkit.NamespacedKey;
@@ -14,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 public class EntityShootBowHandler implements Listener {
 
@@ -37,10 +35,10 @@ public class EntityShootBowHandler implements Listener {
             return;
 
         PersistentDataContainer bowDataContainer = bowMeta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), ItemType.WEAPON.name());
         String weaponName = bowDataContainer.get(key, PersistentDataType.STRING);
 
-        Weapon weapon = TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
+        Weapon weapon = (Weapon) TerraItems.lookupTerraPlugin().getWeaponsConfig().getItemMap().get(weaponName);
         if (!(weapon instanceof RangedWeapon))
             return;
 
@@ -48,7 +46,7 @@ public class EntityShootBowHandler implements Listener {
         if (!rangedWeapon.hasWeaponEffects())
             return;
 
-        event.getProjectile().setMetadata(NamespaceKeys.WEAPON_KEY, new FixedMetadataValue(
+        event.getProjectile().setMetadata(ItemType.WEAPON.name(), new FixedMetadataValue(
                 TerraItems.lookupTerraPlugin(),
                 weapon
         ));

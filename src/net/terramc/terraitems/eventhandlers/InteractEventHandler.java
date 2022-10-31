@@ -3,7 +3,7 @@ package net.terramc.terraitems.eventhandlers;
 import net.terramc.terraitems.PlayerManager;
 import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.TerraPlayer;
-import net.terramc.terraitems.shared.NamespaceKeys;
+import net.terramc.terraitems.shared.ItemType;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.magic.MagicWeapon;
@@ -65,9 +65,9 @@ public class InteractEventHandler implements Listener {
             ammo.setAmount(ammo.getAmount() - 1);
 
         bullet.setPersistent(false);
-        bullet.setMetadata(NamespaceKeys.WEAPON_KEY, new FixedMetadataValue(
+        bullet.setMetadata(ItemType.WEAPON.name(), new FixedMetadataValue(
                 TerraItems.lookupTerraPlugin(),
-                weapon.getWeaponName()
+                weapon.getItemName()
         ));
 
         player.getWorld().playSound(playerLoc, "gun:terra.sound.gunshot", 1.0f, 1.0f);
@@ -84,10 +84,10 @@ public class InteractEventHandler implements Listener {
                 continue;
 
             String ammunition = item.getItemMeta().getPersistentDataContainer().get(
-                    new NamespacedKey(TerraItems.lookupTerraPlugin(), "AMMUNITION"),
+                    new NamespacedKey(TerraItems.lookupTerraPlugin(), ItemType.AMMO.name()),
                     PersistentDataType.STRING);
 
-            if (ammunition != null && ammunition.equals("COPPER_BULLET")) {
+            if (ammunition != null) {
                 return item;
             }
         }
@@ -102,12 +102,12 @@ public class InteractEventHandler implements Listener {
             return null;
 
         PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), ItemType.WEAPON.name());
         String weaponName = pdc.get(key, PersistentDataType.STRING);
 
-        return TerraItems.lookupTerraPlugin()
+        return (Weapon) TerraItems.lookupTerraPlugin()
                 .getWeaponsConfig()
-                .getItems()
+                .getItemMap()
                 .get(weaponName);
     }
 

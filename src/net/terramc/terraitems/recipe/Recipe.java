@@ -13,7 +13,7 @@ public class Recipe {
     private static ShapedRecipe lightShotRecipe() {
         ItemStack itemStack = TerraItems.lookupTerraPlugin()
                 .getAmmoConfig()
-                .getItems()
+                .getItemMap()
                 .get("light-shot")
                 .getItemStack();
 

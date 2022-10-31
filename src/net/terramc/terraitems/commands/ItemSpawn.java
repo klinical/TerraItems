@@ -1,19 +1,13 @@
 package net.terramc.terraitems.commands;
 
 import net.terramc.terraitems.TerraItems;
-import net.terramc.terraitems.ammunition.Ammo;
+import net.terramc.terraitems.item.Item;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -50,14 +44,14 @@ public class ItemSpawn implements CommandExecutor {
                         break;
                     case "ammo":
                         if (args.length == 2) {
-                            Ammo ammo = plugin.getAmmoConfig().getItems().get(args[1]);
+                            Item ammo = plugin.getAmmoConfig().getItemMap().get(args[1]);
 
                             player.getInventory().addItem(ammo.getItemStack());
                         }
                         break;
                     case "list":
                         if (Objects.equals(args[1], "weapons")) {
-                            Set<String> itemKeys = plugin.getWeaponsConfig().getItems().keySet();
+                            Set<String> itemKeys = plugin.getWeaponsConfig().getItemMap().keySet();
 
                             player.sendMessage(Arrays.toString(itemKeys.toArray()));
                         } else if (Objects.equals(args[1], "effects")) {
@@ -65,7 +59,7 @@ public class ItemSpawn implements CommandExecutor {
 
                             player.sendMessage(Arrays.toString(itemKeys.toArray()));
                         } else if (Objects.equals(args[1], "ammo")) {
-                            Set<String> ammoKeys = plugin.getAmmoConfig().getItems().keySet();
+                            Set<String> ammoKeys = plugin.getAmmoConfig().getItemMap().keySet();
 
                             player.sendMessage(Arrays.toString(ammoKeys.toArray()));
                         }
@@ -88,7 +82,7 @@ public class ItemSpawn implements CommandExecutor {
 
     private void giveItem(Player giveTarget, String itemName) {
         ItemStack newItem = plugin.getWeaponsConfig()
-                .getItems()
+                .getItemMap()
                 .get(itemName)
                 .getItemStack();
 

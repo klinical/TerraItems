@@ -1,15 +1,11 @@
 package net.terramc.terraitems.weapons.melee;
 
-import com.google.common.collect.ArrayListMultimap;
-import net.terramc.terraitems.shared.Rarity;
+import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
-import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -20,42 +16,26 @@ public abstract class MeleeWeapon extends Weapon {
         super(weaponName, weaponType);
     }
 
-    public List<String> getRarityAndWeaponTypeLore() {
-        Rarity rarity = weaponMeta.getRarity();
+    protected List<AttributeConfiguration> getDefaultModifiers() {
+        List<AttributeConfiguration> attributeConfigurationList = new ArrayList<>();
+        List<EquipmentSlot> slots = new ArrayList<>(Collections.singleton(EquipmentSlot.HAND));
 
-        String loreLine = ChatColor.translateAlternateColorCodes(
-                '&',
-                Rarity.getPrefix(rarity) +
-                        rarity.getDisplayName() +
-                        "&r &7" + weaponType.getDisplayName());
-
-        List<String> list = new ArrayList<>();
-        list.add(loreLine);
-
-        return list;
-    }
-
-    protected ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers() {
-        ArrayListMultimap<Attribute, AttributeModifier> map = ArrayListMultimap.create();
-        ItemMeta meta = Objects.requireNonNull(this.itemStack.getItemMeta());
-
-        AttributeModifier damageModifier =  new AttributeModifier(
-                UUID.randomUUID(),
-                meta.getDisplayName() + "-" + Attribute.GENERIC_ATTACK_DAMAGE,
+        AttributeConfiguration attackConfiguration = new AttributeConfiguration(
+                Attribute.GENERIC_ATTACK_DAMAGE,
                 getAttackDamage(),
-                AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
+                slots
         );
-        map.put(Attribute.GENERIC_ATTACK_DAMAGE, damageModifier);
 
-        AttributeModifier speedModifier =  new AttributeModifier(
-                UUID.randomUUID(),
-                meta.getDisplayName() + "-" + Attribute.GENERIC_ATTACK_SPEED,
+        AttributeConfiguration speedConfiguration = new AttributeConfiguration(
+                Attribute.GENERIC_ATTACK_SPEED,
                 getAttackSpeed(),
-                AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
+                slots
         );
-        map.put(Attribute.GENERIC_ATTACK_SPEED, speedModifier);
 
-        return map;
+        attributeConfigurationList.add(attackConfiguration);
+        attributeConfigurationList.add(speedConfiguration);
+
+        return attributeConfigurationList;
     }
 
     public @NotNull ItemStack getItemStack() {

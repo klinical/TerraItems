@@ -4,7 +4,7 @@ import net.terramc.terraitems.TerraItems;
 import net.terramc.terraitems.effects.TerraEffect;
 import net.terramc.terraitems.effects.configuration.EffectTrigger;
 import net.terramc.terraitems.effects.manager.EffectManager;
-import net.terramc.terraitems.shared.NamespaceKeys;
+import net.terramc.terraitems.shared.ItemType;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
 import net.terramc.terraitems.weapons.ranged.ProjectileModifiers;
@@ -42,9 +42,9 @@ public class OnHitListener implements Listener {
             return;
 
         PersistentDataContainer container = weaponMeta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), NamespaceKeys.WEAPON_KEY);
+        NamespacedKey key = new NamespacedKey(TerraItems.lookupTerraPlugin(), ItemType.WEAPON.name());
         String weaponName = container.get(key, PersistentDataType.STRING);
-        Weapon weapon = TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
+        Weapon weapon = (Weapon) TerraItems.lookupTerraPlugin().getWeaponsConfig().getItemMap().get(weaponName);
 
         if (weapon == null)
             return;
@@ -58,7 +58,7 @@ public class OnHitListener implements Listener {
             return;
 
         LivingEntity shooter = (LivingEntity) projectile.getShooter();
-        List<MetadataValue> metadata = projectile.getMetadata(NamespaceKeys.WEAPON_KEY);
+        List<MetadataValue> metadata = projectile.getMetadata(ItemType.WEAPON.name());
         if (metadata.isEmpty())
             return;
 
@@ -74,10 +74,10 @@ public class OnHitListener implements Listener {
             if (weaponName == null)
                 return;
 
-            if (!(TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName) instanceof RangedWeapon))
+            if (!(TerraItems.lookupTerraPlugin().getWeaponsConfig().getItemMap().get(weaponName) instanceof RangedWeapon))
                 return;
 
-            RangedWeapon weapon = (RangedWeapon) TerraItems.lookupTerraPlugin().getWeaponsConfig().getItems().get(weaponName);
+            RangedWeapon weapon = (RangedWeapon) TerraItems.lookupTerraPlugin().getWeaponsConfig().getItemMap().get(weaponName);
             if (weapon == null)
                 return;
 

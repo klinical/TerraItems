@@ -1,13 +1,12 @@
 package net.terramc.terraitems.weapons.magic;
 
-import com.google.common.collect.ArrayListMultimap;
+import net.terramc.terraitems.shared.AttributeConfiguration;
 import net.terramc.terraitems.spells.Spell;
 import net.terramc.terraitems.weapons.Weapon;
 import net.terramc.terraitems.weapons.WeaponType;
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,7 @@ public class MagicWeapon extends Weapon {
     }
 
     @Override
-    protected ArrayListMultimap<Attribute, AttributeModifier> getDefaultModifiers() {
-        return ArrayListMultimap.create();
+    protected List<AttributeConfiguration> getDefaultModifiers() {
+        return new ArrayList<>();
     }
 }

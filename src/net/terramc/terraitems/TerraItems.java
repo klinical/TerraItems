@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.terramc.terraitems.commands.ItemSpawn;
 import net.terramc.terraitems.commands.TerraConfig;
+import net.terramc.terraitems.config.TerraItemConfiguration;
 import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
-import net.terramc.terraitems.recipe.Recipe;
+import net.terramc.terraitems.shared.ItemType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,9 +17,9 @@ import java.util.Objects;
 
 public class TerraItems extends JavaPlugin {
 
-    private WeaponsConfig weaponsConfig;
+    private TerraItemConfiguration weaponsConfig;
+    private TerraItemConfiguration ammoConfig;
     private EffectsConfig effectsConfig;
-    private AmmoConfig ammoConfig;
     private static final Gson gson = buildGson();
 
     @Override
@@ -38,14 +39,16 @@ public class TerraItems extends JavaPlugin {
 
     public void reloadConfigs() {
         effectsConfig = new EffectsConfig(this);
-        weaponsConfig = new WeaponsConfig(this);
+        weaponsConfig = new TerraItemConfiguration(this, ItemType.WEAPON);
+        ammoConfig = new TerraItemConfiguration(this, ItemType.AMMO);
+
         this.getLogger().info("Reloaded configuration files.");
     }
 
     private void initConfigs() {
         effectsConfig = new EffectsConfig(this);
-        weaponsConfig = new WeaponsConfig(this);
-        ammoConfig = new AmmoConfig(this);
+        weaponsConfig = new TerraItemConfiguration(this, ItemType.WEAPON);
+        ammoConfig = new TerraItemConfiguration(this, ItemType.AMMO);
 
         saveDefaultConfig();
     }
@@ -103,7 +106,7 @@ public class TerraItems extends JavaPlugin {
         //Bukkit.addRecipe(Recipe.LIGHT_SHOT);
     }
 
-    public WeaponsConfig getWeaponsConfig() {
+    public TerraItemConfiguration getWeaponsConfig() {
         return weaponsConfig;
     }
 
@@ -111,7 +114,7 @@ public class TerraItems extends JavaPlugin {
         return effectsConfig;
     }
 
-    public AmmoConfig getAmmoConfig() { return ammoConfig; }
+    public TerraItemConfiguration getAmmoConfig() { return ammoConfig; }
 
     public static TerraItems lookupTerraPlugin() {
         return (TerraItems) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Terra-Items"));
