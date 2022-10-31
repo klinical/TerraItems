@@ -8,6 +8,7 @@ import net.terramc.terraitems.config.TerraItemConfiguration;
 import net.terramc.terraitems.eventhandlers.EntityShootBowHandler;
 import net.terramc.terraitems.eventhandlers.InteractEventHandler;
 import net.terramc.terraitems.eventhandlers.OnHitListener;
+import net.terramc.terraitems.eventhandlers.PlayerQuitHandler;
 import net.terramc.terraitems.shared.ItemType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -66,6 +67,7 @@ public class TerraItems extends JavaPlugin {
         manager.registerEvents(new OnHitListener(), this);
         manager.registerEvents(new EntityShootBowHandler(), this);
         manager.registerEvents(new InteractEventHandler(), this);
+        manager.registerEvents(new PlayerQuitHandler(), this);
     }
 
     // Add base item crafting recipes for custom items - we're going to need a better way to do this

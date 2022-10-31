@@ -38,6 +38,22 @@ public class EffectManager {
         }
     }
 
+    public static void cancelAllEffectTaskpairs(LivingEntity target) {
+        Plugin plugin = Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("terra-items"));
+        BukkitScheduler scheduler = plugin.getServer().getScheduler();
+
+        HashMap<String, EffectTaskPair> effectPairMap = effectMap.get(target);
+
+        if (effectPairMap != null) {
+            for (EffectTaskPair pair : effectPairMap.values()) {
+                scheduler.cancelTask(pair.getEffectTaskId());
+                scheduler.cancelTask(pair.getCancelEffectTaskId());
+
+                effectPairMap.clear();
+            }
+        }
+    }
+
     public static void applyEffect(LivingEntity self, LivingEntity target, TerraEffect terraEffect) {
         Plugin plugin = Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("terra-items"));
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
